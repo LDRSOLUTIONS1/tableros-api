@@ -13,14 +13,14 @@ class User extends Authenticatable
 
     protected $fillable = [
         'role_id',
-        'manager_id',
-        'segment_id',
         'collaborator_number',
         'external_rh_id',
         'name',
         'email',
         'brand',
         'location_name',
+        'puesto',
+        'area',
         'password',
         'remember_token',
         'estado',

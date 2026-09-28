@@ -84,26 +84,30 @@ class AuthController extends Controller
         if ($user) {
             $user->update([
                 'external_rh_id' => $decoded->id_colaborador,
-                'collaborator_number' => $decoded->id_colaborador,
+                'collaborator_number' => $decoded->numero_colaborador,
                 'name' => $decoded->nombre,
                 'email' => $decoded->correo,
                 'brand' => $decoded->marca,
+                'puesto' => $decoded->puesto,
+                'area' => $decoded->area,
                 'location_name' => $decoded->nombre_sede
             ]);
         } else {
             $user = User::create([
                 'external_rh_id' => $decoded->id_colaborador,
-                'collaborator_number' => $decoded->id_colaborador,
+                'collaborator_number' => $decoded->numero_colaborador,
                 'role_id' => 3,
                 'name' => $decoded->nombre,
                 'email' => $decoded->correo,
                 'brand' => $decoded->marca,
                 'location_name' => $decoded->nombre_sede,
+                'puesto' => $decoded->puesto,
+                'area' => $decoded->area,
                 'password' => Hash::make(Str::random(40))
             ]);
         }
 
-        $tokenResult = $user->createToken('reportes');
+        $tokenResult = $user->createToken('auth_token');
         $token = $tokenResult->plainTextToken;
 
         AccessLog::create([
@@ -124,7 +128,7 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        $user = $request->user()->load('segment');
+        $user = $request->user();
 
         return response()->json([
             'message' => 'Usuario autenticado',

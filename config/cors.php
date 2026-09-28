@@ -13,7 +13,7 @@ return [
     'allowed_origins' => [
         'http://localhost:3000',
         'http://127.0.0.1:3000',
-        'http://reportes.ldrhumanresources.com',
+        'http://tableros.ldrhumanresources.com',
     ],
 
     'allowed_origins_patterns' => [],

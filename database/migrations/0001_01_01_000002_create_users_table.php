@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('email')->nullable()->unique();
             $table->string('brand')->nullable();
             $table->string('location_name')->nullable();
+            $table->string('puesto')->nullable();
+            $table->string('area')->nullable();
             $table->string('password');
             $table->rememberToken();
 
