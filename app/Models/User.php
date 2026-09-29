@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
@@ -41,6 +42,16 @@ class User extends Authenticatable
     public function accessLogs()
     {
         return $this->hasMany(AccessLog::class);
+    }
+
+    public function dashboards(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            PowerBiDashboard::class,
+            'dashboard_user',
+            'user_id',
+            'dashboard_id'
+        )->withTimestamps();
     }
 
     public function scopeActivos($query)

@@ -20,11 +20,6 @@ class RoleSeeder extends Seeder
         ]);
 
         Role::create([
-            'name' => 'Manager',
-            'description' => 'Acceso a sus registros'
-        ]);
-
-        Role::create([
             'name' => 'Consultor',
             'description' => 'Acceso visualización'
         ]);

@@ -141,6 +141,8 @@ class AuthController extends Controller
                 'email' => $user->email,
                 'brand' => $user->brand,
                 'location_name' => $user->location_name,
+                'puesto' => $user->puesto,
+                'area' => $user->area,
                 'estado' => $user->estado,
             ]
         ], 200);
