@@ -9,24 +9,60 @@ use App\Http\Controllers\Controller;
 class TablerosController extends Controller
 
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tableros = PowerBiDashboard::with([
-            'category:id,nombre',
-        ])->select(
-            'id',
-            'category_id',
-            'nombre',
-            'descripcion',
-            'url',
-            'fuente',
-            'orden',
-            'estado',
-            'created_at',
-        )
-            ->activos()
-            ->orderBy('id', 'desc')
-            ->get();
+        $user = $request->user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'Usuario no autenticado'
+            ], 401);
+        }
+
+        $user->load('role');
+
+        if (in_array($user->role?->name, [
+            'Super Administrador',
+            'Administrador',
+            'Consultor',
+        ])) {
+            $tableros = PowerBiDashboard::with([
+                'category:id,nombre',
+            ])
+                ->select(
+                    'id',
+                    'category_id',
+                    'nombre',
+                    'descripcion',
+                    'url',
+                    'fuente',
+                    'orden',
+                    'estado',
+                    'created_at',
+                )
+                ->activos()
+                ->orderBy('id', 'desc')
+                ->get();
+        } else {
+            $tableros = $user->dashboards()
+                ->with([
+                    'category:id,nombre',
+                ])
+                ->select(
+                    'power_bi_dashboards.id',
+                    'power_bi_dashboards.category_id',
+                    'power_bi_dashboards.nombre',
+                    'power_bi_dashboards.descripcion',
+                    'power_bi_dashboards.url',
+                    'power_bi_dashboards.fuente',
+                    'power_bi_dashboards.orden',
+                    'power_bi_dashboards.estado',
+                    'power_bi_dashboards.created_at',
+                )
+                ->activos()
+                ->orderBy('power_bi_dashboards.id', 'desc')
+                ->get();
+        }
 
         return response()->json($tableros, 200);
     }

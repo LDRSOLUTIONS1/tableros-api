@@ -29,6 +29,28 @@ class UsersController extends Controller
         return response()->json($usuarios, 200);
     }
 
+    public function indexLimited()
+    {
+        $usuarios = User::with([
+            'role:id,name',
+        ])
+            ->select(
+                'id',
+                'collaborator_number',
+                'role_id',
+                'name',
+                'email',
+                'estado',
+                'created_at',
+            )
+            ->where('role_id', 3)
+            ->activos()
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($usuarios, 200);
+    }
+
     public function store(Request $request)
     {
         $validated = $this->validateUsers($request);

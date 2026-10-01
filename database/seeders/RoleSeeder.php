@@ -20,6 +20,11 @@ class RoleSeeder extends Seeder
         ]);
 
         Role::create([
+            'name' => 'Limitado',
+            'description' => 'Acceso a solo sus tableros asignados'
+        ]);
+
+        Role::create([
             'name' => 'Consultor',
             'description' => 'Acceso visualización'
         ]);

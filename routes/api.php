@@ -19,4 +19,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/categorias', CategoriesController::class);
     Route::resource('/tableros', TablerosController::class);
 
+    Route::get('/indexLimited', [UsersController::class, 'indexLimited']);
 });
