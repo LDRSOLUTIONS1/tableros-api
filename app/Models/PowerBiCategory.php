@@ -11,6 +11,8 @@ class PowerBiCategory extends Model
         'nombre',
         'descripcion',
         'estado',
+        'created_at',
+        'updated_at',
     ];
 
     public function dashboards(): HasMany

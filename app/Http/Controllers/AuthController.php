@@ -134,9 +134,8 @@ class AuthController extends Controller
             'message' => 'Usuario autenticado',
             'user' => [
                 'id' => $user->id,
-                'role_id' => $user->role_id,
                 'collaborator_number' => $user->collaborator_number,
-                'external_rh_id' => $user->external_rh_id,
+                'role_id' => $user->role_id,
                 'name' => $user->name,
                 'email' => $user->email,
                 'brand' => $user->brand,

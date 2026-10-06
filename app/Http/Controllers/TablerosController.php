@@ -40,6 +40,7 @@ class TablerosController extends Controller
                     'orden',
                     'estado',
                     'created_at',
+                    'updated_at',
                 )
                 ->activos()
                 ->orderBy('id', 'desc')
@@ -59,6 +60,7 @@ class TablerosController extends Controller
                     'power_bi_dashboards.orden',
                     'power_bi_dashboards.estado',
                     'power_bi_dashboards.created_at',
+                    'power_bi_dashboards.updated_at',
                 )
                 ->activos()
                 ->orderBy('power_bi_dashboards.id', 'desc')
@@ -95,6 +97,7 @@ class TablerosController extends Controller
             'orden',
             'estado',
             'created_at',
+            'updated_at',
         )
             ->where('id', $id)
             ->activos()

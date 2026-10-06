@@ -16,6 +16,7 @@ class CategoriesController extends Controller
             'descripcion',
             'estado',
             'created_at',
+            'updated_at',
         )
             ->activos()
             ->orderBy('id', 'desc')
@@ -45,6 +46,7 @@ class CategoriesController extends Controller
             'descripcion',
             'estado',
             'created_at',
+            'updated_at',
         )
             ->where('id', $id)
             ->activos()

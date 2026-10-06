@@ -19,8 +19,13 @@ class UsersController extends Controller
             'role_id',
             'name',
             'email',
+            'brand',
+            'location_name',
+            'puesto',
+            'area',
             'estado',
             'created_at',
+            'updated_at',
         )
             ->activos()
             ->orderBy('id', 'desc')
@@ -41,8 +46,13 @@ class UsersController extends Controller
                 'role_id',
                 'name',
                 'email',
+                'brand',
+                'location_name',
+                'puesto',
+                'area',
                 'estado',
                 'created_at',
+                'updated_at',
             )
             ->where('role_id', 3)
             ->activos()
@@ -76,8 +86,13 @@ class UsersController extends Controller
             'role_id',
             'name',
             'email',
+            'brand',
+            'location_name',
+            'puesto',
+            'area',
             'estado',
             'created_at',
+            'updated_at',
         )
             ->where('id', $id)
             ->activos()
