@@ -33,6 +33,7 @@ class UsersController extends Controller
     {
         $usuarios = User::with([
             'role:id,name',
+            'dashboards:id,nombre',
         ])
             ->select(
                 'id',

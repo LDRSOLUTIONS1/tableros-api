@@ -20,4 +20,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/tableros', TablerosController::class);
 
     Route::get('/indexLimited', [UsersController::class, 'indexLimited']);
+    Route::get('/indexName', [TablerosController::class, 'indexName']);
+    Route::post('/dashboard/assign', [TablerosController::class, 'assign']);
 });

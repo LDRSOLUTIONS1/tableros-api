@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PowerBiDashboard;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -139,5 +140,78 @@ class TablerosController extends Controller
                 'estado.in'       => 'El estado debe ser 1 (Inactivo) o 2 (Activo).',
             ]
         );
+    }
+
+    public function indexName()
+    {
+        $roles = PowerBiDashboard::with([
+            'category:id,nombre'
+        ])
+            ->select(
+                'id',
+                'category_id',
+                'nombre',
+
+            )
+            ->activos()
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($roles, 200);
+    }
+
+
+    public function assign(Request $request)
+    {
+        $admin = $request->user();
+
+        $admin->load('role');
+
+        if (!in_array($admin->role?->name, [
+            'Super Administrador',
+            'Administrador'
+        ])) {
+            return response()->json([
+                'message' => 'No tienes permisos para asignar tableros.'
+            ], 403);
+        }
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'dashboard_ids' => 'present|array',
+            'dashboard_ids.*' => [
+                'integer',
+                'distinct',
+                'exists:power_bi_dashboards,id',
+            ],
+        ], [
+            'user_id.required' => 'El ID del usuario es obligatorio.',
+            'user_id.exists' => 'El usuario no existe.',
+            'dashboard_ids.present' =>
+            'Debes enviar la lista de tableros.',
+            'dashboard_ids.array' =>
+            'La lista de tableros no es válida.',
+            'dashboard_ids.*.exists' =>
+            'Alguno de los tableros no existe.',
+            'dashboard_ids.*.distinct' =>
+            'Hay tableros repetidos.',
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+
+        if ($user->role_id != 3) {
+            return response()->json([
+                'message' =>
+                'Solo se pueden asignar tableros a usuarios con rol Limitado.'
+            ], 422);
+        }
+
+        $user->dashboards()->sync(
+            $validated['dashboard_ids']
+        );
+
+        return response()->json([
+            'message' => 'Tableros asignados correctamente.',
+        ], 200);
     }
 }
