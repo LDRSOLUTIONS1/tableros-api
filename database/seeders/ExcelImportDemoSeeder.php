@@ -158,7 +158,7 @@ class ExcelImportDemoSeeder extends Seeder
                     'nombre' => 'Venta al público de vehículos',
                     'descripcion' =>
                         'Datos de ventas de vehículos exportados desde Power BI.',
-                    'activo' => true,
+                    'estado' => 2,
                 ]
             );
 

@@ -22,8 +22,9 @@ return new class extends Migration
             // Versión que actualmente utiliza el sistema
             $table->unsignedBigInteger('current_version_id')->nullable();
 
-            $table->boolean('activo')->default(true);
-
+            $table->tinyInteger('estado')
+                ->default(2)
+                ->comment('0=Eliminado, 1=Inactivo, 2=Activo');
             $table->timestamps();
 
             $table->index('current_version_id');

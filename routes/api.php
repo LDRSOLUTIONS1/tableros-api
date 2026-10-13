@@ -7,6 +7,7 @@ use App\Http\Controllers\LogsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TablerosController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\ImportacionesController;
 
 Route::post('/login/{collaborator_number}', [AuthController::class, 'logincollaborator']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -18,6 +19,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/logs', LogsController::class);
     Route::resource('/categorias', CategoriesController::class);
     Route::resource('/tableros', TablerosController::class);
+
+    Route::resource('/importaciones', ImportacionesController::class);
 
     Route::get('/indexLimited', [UsersController::class, 'indexLimited']);
     Route::get('/indexName', [TablerosController::class, 'indexName']);

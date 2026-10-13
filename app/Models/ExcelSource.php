@@ -14,7 +14,9 @@ class ExcelSource extends Model
         'nombre',
         'descripcion',
         'current_version_id',
-        'activo',
+        'estado',
+        'created_at',
+        'updated_at',
     ];
 
     protected $casts = [
@@ -35,5 +37,10 @@ class ExcelSource extends Model
             ExcelImportVersion::class,
             'current_version_id'
         );
+    }
+
+    public function scopeActivos($query)
+    {
+        return $query->whereIn('estado', [1, 2]);
     }
 }
