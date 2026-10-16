@@ -13,22 +13,22 @@ class PowerBiCategorySeeder extends Seeder
             [
                 'nombre' => 'Vehículos Ligeros',
                 'descripcion' => 'Tableros relacionados con vehículos ligeros.',
-                'estado' => 1,
+                'estado' => 2,
             ],
             [
                 'nombre' => 'Vehículos Pesados',
                 'descripcion' => 'Tableros relacionados con vehículos pesados.',
-                'estado' => 1,
+                'estado' => 2,
             ],
             [
                 'nombre' => 'Emplacamientos Tractos y Remolques',
                 'descripcion' => 'Tableros relacionados con emplacamientos de tractos y remolques.',
-                'estado' => 1,
+                'estado' => 2,
             ],
             [
                 'nombre' => 'Especificaciones Técnicas P&V',
                 'descripcion' => 'Tableros relacionados con especificaciones técnicas de P&V.',
-                'estado' => 1,
+                'estado' => 2,
             ],
         ];
 

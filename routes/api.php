@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ExcelImportController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TablerosController;
@@ -21,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('/tableros', TablerosController::class);
 
     Route::resource('/importaciones', ImportacionesController::class);
+    Route::post('/importaciones/{excelSource}/subir', [ExcelImportController::class, 'store']);
 
     Route::get('/indexLimited', [UsersController::class, 'indexLimited']);
     Route::get('/indexName', [TablerosController::class, 'indexName']);

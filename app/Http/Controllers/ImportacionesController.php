@@ -41,16 +41,23 @@ class ImportacionesController extends Controller
 
     public function show($id)
     {
-        $importacion = ExcelSource::select(
-            'id',
-            'codigo',
-            'nombre',
-            'descripcion',
-            'current_version_id',
-            'estado',
-            'created_at',
-            'updated_at',
-        )
+        $importacion = ExcelSource::with([
+            'versions',
+            'versions.importedBy:id,name,email',
+            'versions.exportacionVehiculos',
+            'currentVersion'
+
+        ])
+            ->select(
+                'id',
+                'codigo',
+                'nombre',
+                'descripcion',
+                'current_version_id',
+                'estado',
+                'created_at',
+                'updated_at',
+            )
             ->where('id', $id)
             ->activos()
             ->firstOrFail();
@@ -63,7 +70,7 @@ class ImportacionesController extends Controller
         $importacion = ExcelSource::activos()
             ->findOrFail($id);
 
-        $validated = $this->validateImportaciones($request, $id); ;
+        $validated = $this->validateImportaciones($request, $id);;
 
         $importacion->update($validated);
 
