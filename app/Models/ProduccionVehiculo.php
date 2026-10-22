@@ -11,6 +11,7 @@ class ProduccionVehiculo extends Model
 
     protected $fillable = [
         'excel_import_version_id',
+        'registro_hash',
         'prod_est',
         'cobertura',
         'anio',

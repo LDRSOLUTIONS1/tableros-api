@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             PowerBiCategorySeeder::class,
             PowerBiDashboardSeeder::class,
-            ExcelImportDemoSeeder::class,
+            ExcelSourcesSeeder::class,
         ]);
     }
 }

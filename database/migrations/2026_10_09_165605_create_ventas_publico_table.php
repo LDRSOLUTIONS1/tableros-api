@@ -14,6 +14,9 @@ return new class extends Migration
                 ->constrained('excel_import_versions')
                 ->cascadeOnDelete();
 
+            $table->char('registro_hash', 64)
+                ->unique('ventas_publico_registro_hash_unique');
+
             $table->string('tema', 255)->nullable();
             $table->unsignedSmallInteger('anio');
             $table->string('mes', 30);

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-class ExportacionVehiculosImporter implements ExcelSourceImporter
+class VentasLigerosImporter implements ExcelSourceImporter
 {
     public function requiredHeadings(): array
     {

@@ -11,6 +11,7 @@ class VentaPublico extends Model
 
     protected $fillable = [
         'excel_import_version_id',
+        'registro_hash',
         'tema',
         'anio',
         'mes',

@@ -14,7 +14,11 @@ return new class extends Migration
                 ->constrained('excel_import_versions')
                 ->cascadeOnDelete();
 
+            $table->char('registro_hash', 64)
+                ->unique('produccion_vehiculos_registro_hash_unique');
+
             $table->string('prod_est', 255)->nullable();
+            $table->string('cobertura', 100)->nullable();
             $table->unsignedSmallInteger('anio');
             $table->string('mes', 30);
             $table->string('marca', 100)->nullable();

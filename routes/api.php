@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ExcelImportController;
-use App\Http\Controllers\LogsController;
+use App\Http\Controllers\LogsController;    
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TablerosController;
 use App\Http\Controllers\UsersController;

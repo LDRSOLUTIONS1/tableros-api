@@ -1,11 +1,11 @@
 <?php
 
-use App\Imports\Handlers\ExportacionVehiculosImporter;
+use App\Imports\Handlers\ExportacionImporter;
+use App\Imports\Handlers\ProduccionImporter;
+use App\Imports\Handlers\VentasLigerosImporter;
 
 return [
-    'EXPORTACION_VEHICULOS' => ExportacionVehiculosImporter::class,
-
-    // Los siguientes Excel se agregarán aquí:
-    // 'VENTAS_PESADOS' => VentasPesadosImporter::class,
-    // 'EMPLACAMIENTOS' => EmplacamientosImporter::class,
+    'EXPORTACION'       => ExportacionImporter::class,
+    'PRODUCCION'        => ProduccionImporter::class,
+    'VENTASLIGEROS'     => VentasLigerosImporter::class,
 ];
