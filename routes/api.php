@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ExcelImportController;
-use App\Http\Controllers\LogsController;    
+use App\Http\Controllers\LogsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TablerosController;
 use App\Http\Controllers\UsersController;
@@ -23,6 +23,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::resource('/importaciones', ImportacionesController::class);
     Route::post('/importaciones/{excelSource}/subir', [ExcelImportController::class, 'store']);
+    Route::get('/{excelSource}/datos', [ExcelImportController::class, 'datosActuales']);
+    Route::get('/{excelSource}/versiones', [ExcelImportController::class, 'versiones']);
+    Route::get('/importaciones/{excelSource}/versiones/{version}/descargar', [ExcelImportController::class, 'descargar'])->name('importaciones.versiones.descargar');
 
     Route::get('/indexLimited', [UsersController::class, 'indexLimited']);
     Route::get('/indexName', [TablerosController::class, 'indexName']);

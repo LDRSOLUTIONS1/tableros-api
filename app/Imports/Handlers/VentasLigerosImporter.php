@@ -13,17 +13,22 @@ class VentasLigerosImporter implements ExcelSourceImporter
     public function requiredHeadings(): array
     {
         return [
-            'prod_est',
-            'cobertura',
+            'tema',
             'ano',
-            'mes_numero',
             'mes',
+            'mes_numero',
             'marca',
             'modelo',
             'tipo',
-            'segmento',
-            'exportacion',
-            'pais_destino',
+            'segmentoinegi',
+            'origen',
+            'pais_origen',
+            'cantidad',
+            'mercadoinegi',
+            'marcamercadofoton',
+            'unidadfotoninegi',
+            'seg_p_v',
+            'origen_2',
         ];
     }
 
@@ -35,7 +40,6 @@ class VentasLigerosImporter implements ExcelSourceImporter
         foreach ($rows as $index => $row) {
             $row = collect($row)->toArray();
 
-            // Ignorar filas completamente vacías.
             $hasData = collect($row)->contains(
                 fn($value) => $value !== null
                     && trim((string) $value) !== ''
@@ -45,22 +49,18 @@ class VentasLigerosImporter implements ExcelSourceImporter
                 continue;
             }
 
-            // Preparar los datos del Excel.
             $data = [
-                'prod_est' => $this->textOrNull(
-                    $row['prod_est'] ?? null
-                ),
-                'cobertura' => $this->textOrNull(
-                    $row['cobertura'] ?? null
+                'tema' => $this->textOrNull(
+                    $row['tema'] ?? null
                 ),
                 'anio' => $this->integerOrNull(
                     $row['ano'] ?? null
                 ),
-                'mes_numero' => $this->integerOrNull(
-                    $row['mes_numero'] ?? null
-                ),
                 'mes' => $this->textOrNull(
                     $row['mes'] ?? null
+                ),
+                'mes_numero' => $this->integerOrNull(
+                    $row['mes_numero'] ?? null
                 ),
                 'marca' => $this->textOrNull(
                     $row['marca'] ?? null
@@ -71,49 +71,77 @@ class VentasLigerosImporter implements ExcelSourceImporter
                 'tipo' => $this->textOrNull(
                     $row['tipo'] ?? null
                 ),
-                'segmento' => $this->textOrNull(
-                    $row['segmento'] ?? null
+                'segmento_inegi' => $this->textOrNull(
+                    $row['segmentoinegi'] ?? null
                 ),
-                'exportacion' => $this->integerOrNull(
-                    $row['exportacion'] ?? null
+                'origen' => $this->textOrNull(
+                    $row['origen'] ?? null
                 ),
-                'pais_destino' => $this->textOrNull(
-                    $row['pais_destino'] ?? null
+                'pais_origen' => $this->textOrNull(
+                    $row['pais_origen'] ?? null
+                ),
+                'cantidad' => $this->integerOrNull(
+                    $row['cantidad'] ?? null
+                ),
+                'mercado_inegi' => $this->textOrNull(
+                    $row['mercadoinegi'] ?? null
+                ),
+                'marca_mercado_foton' => $this->textOrNull(
+                    $row['marcamercadofoton'] ?? null
+                ),
+                'unidad_foton_inegi' => $this->textOrNull(
+                    $row['unidadfotoninegi'] ?? null
+                ),
+                'seg_pv' => $this->textOrNull(
+                    $row['seg_p_v'] ?? null
+                ),
+                'origen_2' => $this->textOrNull(
+                    $row['origen_2'] ?? null
                 ),
             ];
 
-            // Validar cada fila.
-            $validator = Validator::make($data, [
-                'prod_est'      => 'nullable|string|max:255',
-                'cobertura'     => 'nullable|string|max:100',
-                'anio'          => 'required|integer|min:1900|max:2100',
-                'mes_numero'    => 'nullable|integer|between:1,12',
-                'mes'           => 'required|string|max:30',
-                'marca'         => 'nullable|string|max:100',
-                'modelo'        => 'nullable|string|max:150',
-                'tipo'          => 'nullable|string|max:100',
-                'segmento'      => 'nullable|string|max:100',
-                'exportacion'   => 'nullable|integer|min:0',
-                'pais_destino'  => 'nullable|string|max:100',
-            ], [
-                'prod_est.max'          => 'El prod_est no puede tener más de 255 caracteres.',
-                'cobertura.max'         => 'La cobertura no puede tener más de 100 caracteres.',
-                'anio.required'         => 'El año es obligatorio.',
-                'anio.integer'          => 'El año debe ser un número entero.',
-                'anio.min'              => 'El año debe ser mayor o igual a 1900.',
-                'anio.max'              => 'El año debe ser menor o igual a 2100.',
-                'mes_numero.integer'    => 'El número de mes debe ser un número entero.',
-                'mes_numero.between'    => 'El número de mes debe estar entre 1 y 12.',
-                'mes.required'          => 'El mes es obligatorio.',
-                'mes.max'               => 'El mes no puede tener más de 30 caracteres.',
-                'marca.max'             => 'La marca no puede tener más de 100 caracteres.',
-                'modelo.max'            => 'El modelo no puede tener más de 150 caracteres.',
-                'tipo.max'              => 'El tipo no puede tener más de 100 caracteres.',
-                'segmento.max'          => 'El segmento no puede tener más de 100 caracteres.',
-                'exportacion.integer'   => 'La exportación debe ser un número entero.',
-                'exportacion.min'       => 'La exportación no puede ser negativa.',
-                'pais_destino.max'      => 'El país de destino no puede tener más de 100 caracteres.',
-            ]);
+            $validator = Validator::make(
+                $data,
+                [
+                    'tema'                  => 'required|string|max:255',
+                    'anio'                  => 'required|integer|min:1900|max:2100',
+                    'mes'                   => 'required|string|max:30',
+                    'mes_numero'            => 'required|integer|min:1|max:12',
+                    'marca'                 => 'required|string|max:100',
+                    'modelo'                => 'required|string|max:150',
+                    'tipo'                  => 'required|string|max:100',
+                    'segmento_inegi'        => 'required|string|max:100',
+                    'origen'                => 'required|string|max:50',
+                    'pais_origen'           => 'required|string|max:100',
+                    'cantidad'              => 'required|integer|min:0',
+                    'mercado_inegi'         => 'required|string|max:100',
+                    'marca_mercado_foton'   => 'required|string|max:100',
+                    'unidad_foton_inegi'    => 'nullable|string|max:150',
+                    'seg_pv'                => 'nullable|string|max:100',
+                    'origen_2'              => 'nullable|string|max:100',
+                ],
+                [
+                    'tema.required'                 => 'El campo tema es requerido.',
+                    'anio.required'                 => 'El campo año es requerido.',
+                    'anio.integer'                  => 'El año debe ser un número entero.',
+                    'mes.required'                  => 'El campo mes es requerido.',
+                    'mes_numero.required'           => 'El número de mes es requerido.',
+                    'mes_numero.integer'            => 'El número de mes debe ser un entero.',
+                    'mes_numero.min'                => 'El número de mes debe estar entre 1 y 12.',
+                    'mes_numero.max'                => 'El número de mes debe estar entre 1 y 12.',
+                    'marca.required'                => 'El campo marca es requerido.',
+                    'modelo.required'               => 'El campo modelo es requerido.',
+                    'tipo.required'                 => 'El campo tipo es requerido.',
+                    'segmento_inegi.required'       => 'El campo SegmentoInegi es requerido.',
+                    'origen.required'               => 'El campo origen es requerido.',
+                    'pais_origen.required'          => 'El campo País_origen es requerido.',
+                    'cantidad.required'             => 'El campo cantidad es requerido.',
+                    'cantidad.integer'              => 'La cantidad debe ser un número entero.',
+                    'cantidad.min'                  => 'La cantidad no puede ser negativa.',
+                    'mercado_inegi.required'        => 'El campo MercadoInegi es requerido.',
+                    'marca_mercado_foton.required'  => 'El campo MarcaMercadoFoton es requerido.',
+                ]
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([
@@ -121,51 +149,57 @@ class VentasLigerosImporter implements ExcelSourceImporter
                         'Error en la fila Excel '
                             . ($index + 2)
                             . ': '
-                            . implode(' ', $validator->errors()->all()),
+                            . implode(
+                                ' ',
+                                $validator->errors()->all()
+                            ),
                     ],
                 ]);
             }
 
             $data = $validator->validated();
 
-            // La columna exportacion es NOT NULL y tiene default 0.
-            $data['exportacion'] = (int) ($data['exportacion'] ?? 0);
-
-            /*
-             * Definir qué campos identifican un registro único.
-             *
-             * exportacion y mes se excluyen porque el primero
-             * puede cambiar y el segundo se deriva de mes_numero.
-             */
             $identity = [
-                'prod_est' => $this->normalizeIdentityText(
-                    $data['prod_est'] ?? null
-                ),
-                'cobertura' => $this->normalizeIdentityText(
-                    $data['cobertura'] ?? null
+                'tema' => $this->normalizeIdentityText(
+                    $data['tema']
                 ),
                 'anio' => (int) $data['anio'],
-                'mes_numero' => isset($data['mes_numero'])
-                    ? (int) $data['mes_numero']
-                    : null,
+                'mes_numero' => (int) $data['mes_numero'],
                 'marca' => $this->normalizeIdentityText(
-                    $data['marca'] ?? null
+                    $data['marca']
                 ),
                 'modelo' => $this->normalizeIdentityText(
-                    $data['modelo'] ?? null
+                    $data['modelo']
                 ),
                 'tipo' => $this->normalizeIdentityText(
-                    $data['tipo'] ?? null
+                    $data['tipo']
                 ),
-                'segmento' => $this->normalizeIdentityText(
-                    $data['segmento'] ?? null
+                'segmento_inegi' => $this->normalizeIdentityText(
+                    $data['segmento_inegi']
                 ),
-                'pais_destino' => $this->normalizeIdentityText(
-                    $data['pais_destino'] ?? null
+                'origen' => $this->normalizeIdentityText(
+                    $data['origen']
+                ),
+                'pais_origen' => $this->normalizeIdentityText(
+                    $data['pais_origen']
+                ),
+                'mercado_inegi' => $this->normalizeIdentityText(
+                    $data['mercado_inegi']
+                ),
+                'marca_mercado_foton' => $this->normalizeIdentityText(
+                    $data['marca_mercado_foton']
+                ),
+                'unidad_foton_inegi' => $this->normalizeIdentityText(
+                    $data['unidad_foton_inegi'] ?? null
+                ),
+                'seg_pv' => $this->normalizeIdentityText(
+                    $data['seg_pv'] ?? null
+                ),
+                'origen_2' => $this->normalizeIdentityText(
+                    $data['origen_2'] ?? null
                 ),
             ];
 
-            // Generar el identificador de forma automática.
             $registroHash = hash(
                 'sha256',
                 json_encode(
@@ -176,7 +210,6 @@ class VentasLigerosImporter implements ExcelSourceImporter
                 )
             );
 
-            // Preparar el registro que se guardará en MySQL.
             $records[] = array_merge($data, [
                 'registro_hash' => $registroHash,
                 'excel_import_version_id' => $versionId,
@@ -193,45 +226,38 @@ class VentasLigerosImporter implements ExcelSourceImporter
             ]);
         }
 
-        /*
-         * INSERTAR O ACTUALIZAR:
-         *
-         * Si registro_hash no existe, inserta la fila.
-         * Si ya existe, actualiza los datos de esa fila.
-         * El índice UNIQUE evita duplicados por esa clave.
-         */
         $updatedColumns = [
-            'prod_est',
-            'cobertura',
+            'tema',
             'anio',
-            'mes_numero',
             'mes',
+            'mes_numero',
             'marca',
             'modelo',
             'tipo',
-            'segmento',
-            'exportacion',
-            'pais_destino',
+            'segmento_inegi',
+            'origen',
+            'pais_origen',
+            'cantidad',
+            'mercado_inegi',
+            'marca_mercado_foton',
+            'unidad_foton_inegi',
+            'seg_pv',
+            'origen_2',
             'excel_import_version_id',
             'updated_at',
         ];
 
         foreach (array_chunk($records, 500) as $chunk) {
-            DB::table('exportacion_vehiculos')->upsert(
+            DB::table('ventas_publico')->upsert(
                 $chunk,
                 ['registro_hash'],
                 $updatedColumns
             );
         }
 
-        // Número de filas válidas procesadas, no de filas nuevas.
         return count($records);
     }
 
-    /**
-     * Normalizar textos para que diferencias de mayúsculas
-     * o espacios no generen identificadores distintos.
-     */
     private function normalizeIdentityText(mixed $value): ?string
     {
         if ($value === null) {

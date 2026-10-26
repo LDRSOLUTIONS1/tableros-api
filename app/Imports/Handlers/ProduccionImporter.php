@@ -37,12 +37,12 @@ class ProduccionImporter implements ExcelSourceImporter
             $hasData = collect($row)->contains(
                 fn($value) => $value !== null
                     && trim((string) $value) !== ''
-            );
+            );  
 
             if (!$hasData) {
                 continue;
             }
-            // Preparar los datos del Excel.
+
             $data = [
                 'prod_est' => $this->textOrNull(
                     $row['prod_est'] ?? null
@@ -90,7 +90,7 @@ class ProduccionImporter implements ExcelSourceImporter
             ], [
                 'prod_est.required'      => 'El campo prod_est es requerido.',
                 'cobertura.required'     => 'El campo cobertura es requerido.',
-                'anio.required'          => 'El campo anio es requerido.',
+                'anio.required'          => 'El campo año es requerido.',
                 'mes.required'           => 'El campo mes es requerido.',
                 'marca.required'         => 'El campo marca es requerido.',
                 'modelo.required'        => 'El campo modelo es requerido.',
