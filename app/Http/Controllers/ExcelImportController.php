@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Database\Eloquent\Model;
+use App\Support\XlsxTrailingRowsCleaner;
 use Throwable;
 
 class ExcelImportController extends Controller
@@ -147,14 +148,29 @@ class ExcelImportController extends Controller
             ], 500);
         }
 
+        $tempImportPath = null;
+
         try {
+            $originalPath = Storage::disk('local')->path(
+                $version->file_path
+            );
+
+            $importPath = $originalPath;
+
+            if (
+                strtolower($file->getClientOriginalExtension()) === 'xlsx'
+            ) {
+                $tempImportPath = app(
+                    XlsxTrailingRowsCleaner::class
+                )->cleanCopy($originalPath);
+
+                $importPath = $tempImportPath;
+            }
+
             // Leer el archivo sin conocer la tabla de destino.
             $reader = new ExcelRowsReader();
 
-            Excel::import(
-                $reader,
-                Storage::disk('local')->path($version->file_path)
-            );
+            Excel::import($reader, $importPath);
 
             $rows = $reader->rows
                 ->filter(function ($row) {
@@ -288,6 +304,10 @@ class ExcelImportController extends Controller
                     'status' => 'failed',
                 ],
             ], 500);
+        } finally {
+            if ($tempImportPath && is_file($tempImportPath)) {
+                @unlink($tempImportPath);
+            }
         }
     }
 
