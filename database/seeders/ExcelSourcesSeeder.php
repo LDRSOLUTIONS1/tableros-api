@@ -11,15 +11,15 @@ class ExcelSourcesSeeder extends Seeder
     {
         $registros = [
             [
-                'codigo'      => 'PRODUCCION',
-                'nombre'      => 'PRODUCCION',
-                'descripcion' => 'PRODUCCION',
-                'estado'      => 2,
-            ],
-            [
                 'codigo'      => 'EXPORTACION',
                 'nombre'      => 'EXPORTACION',
                 'descripcion' => 'EXPORTACION',
+                'estado'      => 2,
+            ],
+            [
+                'codigo'      => 'PRODUCCION',
+                'nombre'      => 'PRODUCCION',
+                'descripcion' => 'PRODUCCION',
                 'estado'      => 2,
             ],
             [
@@ -27,7 +27,68 @@ class ExcelSourcesSeeder extends Seeder
                 'nombre'      => 'VENTASLIGEROS',
                 'descripcion' => 'VENTASLIGEROS',
                 'estado'      => 2,
-            ]
+            ],
+
+
+            [
+                'codigo'      => 'ECOLOGICOS',
+                'nombre'      => 'ECOLOGICOS',
+                'descripcion' => 'ECOLOGICOS',
+                'estado'      => 2,
+            ],
+            [
+                'codigo'      => 'MARCASMODELOS',
+                'nombre'      => 'MARCASMODELOS',
+                'descripcion' => 'MARCASMODELOS',
+                'estado'      => 2,
+            ],
+            [
+                'codigo'      => 'VENTASVEHICULOS',
+                'nombre'      => 'VENTASVEHICULOS',
+                'descripcion' => 'VENTASVEHICULOS',
+                'estado'      => 2,
+            ],
+
+
+            [
+                'codigo'      => 'COMPARATIVOS',
+                'nombre'      => 'COMPARATIVOS',
+                'descripcion' => 'COMPARATIVOS',
+                'estado'      => 2,
+            ],
+            [
+                'codigo'      => 'IMAGENESMODELOS',
+                'nombre'      => 'IMAGENESMODELOS',
+                'descripcion' => 'IMAGENESMODELOS',
+                'estado'      => 2,
+            ],
+            [
+                'codigo'      => 'PRECIOSOFERTAS',
+                'nombre'      => 'PRECIOSOFERTAS',
+                'descripcion' => 'PRECIOSOFERTAS',
+                'estado'      => 2,
+
+            ],
+
+
+            [
+                'codigo'      => 'SEGMENTOFOTON',
+                'nombre'      => 'SEGMENTOFOTON',
+                'descripcion' => 'SEGMENTOFOTON',
+                'estado'      => 2,
+            ],
+            [
+                'codigo'      => 'VENTAS_LIGEROS',
+                'nombre'      => 'VENTAS_LIGEROS',
+                'descripcion' => 'VENTAS_LIGEROS',
+                'estado'      => 2,
+            ],
+            [
+                'codigo'      => 'VENTASVEHICULOSECOLOGICOS',
+                'nombre'      => 'VENTASVEHICULOSECOLOGICOS',
+                'descripcion' => 'VENTASVEHICULOSECOLOGICOS',
+                'estado'      => 2,
+            ],
         ];
 
         DB::transaction(function () use ($registros) {
