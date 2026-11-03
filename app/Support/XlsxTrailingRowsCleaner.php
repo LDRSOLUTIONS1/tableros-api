@@ -6,8 +6,19 @@ use RuntimeException;
 use Throwable;
 use ZipArchive;
 
+/**
+ * Limpia las filas sobrantes de una copia de un archivo Excel XLSX.
+ */
 class XlsxTrailingRowsCleaner
 {
+    /**
+     * Crea una copia temporal del Excel, identifica el rango real de datos
+     * de la primera hoja y elimina las filas posteriores que estén vacías.
+     *
+     * @param string $sourcePath Ruta del archivo Excel original.
+     * @return string Ruta de la copia temporal limpia.
+     * @throws RuntimeException Si ocurre un error al copiar, abrir o modificar el archivo.
+     */
     public function cleanCopy(string $sourcePath): string
     {
         $temp = tempnam(sys_get_temp_dir(), 'xlsx_');
@@ -113,6 +124,13 @@ class XlsxTrailingRowsCleaner
         }
     }
 
+    /**
+     * Analiza el XML de la hoja para determinar la última fila y columna
+     * que contienen valores o fórmulas, ignorando las celdas vacías.
+     *
+     * @param string $xml Contenido XML de la hoja de Excel.
+     * @return array Arreglo con el número de la última fila y la letra de la última columna.
+     */
     private function findDataBounds(string $xml): array
     {
         $lastRow = 0;
@@ -188,6 +206,14 @@ class XlsxTrailingRowsCleaner
         ];
     }
 
+    /**
+     * Localiza la ruta XML de la primera hoja del libro mediante las relaciones
+     * internas del XLSX, sin asumir que el archivo se llama sheet1.xml.
+     *
+     * @param ZipArchive $zip Archivo XLSX abierto como ZIP.
+     * @return string Ruta interna del XML de la primera hoja.
+     * @throws RuntimeException Si la estructura del libro no es válida o no encuentra la hoja.
+     */
     private function firstWorksheetPath(ZipArchive $zip): string
     {
         $workbookXml = $zip->getFromName('xl/workbook.xml');
@@ -285,6 +311,13 @@ class XlsxTrailingRowsCleaner
         );
     }
 
+    /**
+     * Convierte la letra de una columna de Excel en su número equivalente.
+     * Por ejemplo, A corresponde a 1, Z a 26 y AA a 27.
+     *
+     * @param string $column Letra o combinación de letras de la columna.
+     * @return int Número equivalente de la columna.
+     */
     private function columnToNumber(string $column): int
     {
         $number = 0;
@@ -296,6 +329,13 @@ class XlsxTrailingRowsCleaner
         return $number;
     }
 
+    /**
+     * Convierte un número en la letra o combinación de letras de Excel.
+     * Por ejemplo, 1 corresponde a A, 26 a Z y 27 a AA.
+     *
+     * @param int $number Número de la columna.
+     * @return string Nombre de la columna en formato Excel.
+     */
     private function numberToColumn(int $number): string
     {
         $column = '';

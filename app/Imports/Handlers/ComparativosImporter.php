@@ -10,6 +10,59 @@ use Illuminate\Validation\ValidationException;
 
 class ComparativosImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'id',
+            'company',
+            'model',
+            'version',
+            'year',
+            'price',
+            'bonus',
+            'price_with_bonus',
+            'sales_model_ytd_2025',
+            'sales_version_ytd_2025',
+            'market_share_by_segment',
+            'foton',
+            'origin',
+            'avaliable',
+            'segment',
+            'sub_segment',
+            'bodywork',
+            'drive',
+            'energy_system',
+            'engine_baterry',
+            'displacement',
+            'battery_capacity_kwh',
+            'transmission',
+            'turbo',
+            'autonomy',
+            'aceleration_time',
+            'maximum_speed',
+            'hp',
+            'lb_ft',
+            'long',
+            'tank',
+            'payload_capacity',
+            'towing_capacity',
+            'seats',
+            'vol_m3',
+            'class',
+            'gwv',
+            'emission_standard',
+            'range',
+            'range_price',
+            'charging_time_hours',
+            'towing_capacity_price',
+            'price_per_hp',
+            'price_per_lb_pie',
+            'payload_per_dollar',
+            'n_airbags',
+            'n_adas',
+        ];
+    }
+
     public function requiredHeadings(): array
     {
         return [

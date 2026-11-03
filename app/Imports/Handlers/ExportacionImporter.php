@@ -10,6 +10,22 @@ use Illuminate\Validation\ValidationException;
 
 class ExportacionImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'prod_est',
+            'cobertura',
+            'ano',
+            'mes_numero',
+            'mes',
+            'marca',
+            'modelo',
+            'tipo',
+            'segmento',
+            'exportacion',
+            'pais_destino',
+        ];
+    }
     public function requiredHeadings(): array
     {
         return [

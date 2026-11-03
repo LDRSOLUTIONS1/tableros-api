@@ -10,6 +10,21 @@ use Illuminate\Validation\ValidationException;
 
 class PreciosOfertasImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'company',
+            'model',
+            'version',
+            'foton',
+            'precio',
+            'bono',
+            'meses_sin_intereses',
+            'cargo_por_apertura',
+            'tasas_de_interes',
+        ];
+    }
+
     public function requiredHeadings(): array
     {
         return [

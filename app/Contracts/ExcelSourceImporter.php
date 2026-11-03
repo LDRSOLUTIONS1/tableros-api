@@ -8,5 +8,7 @@ interface ExcelSourceImporter
 {
     public function requiredHeadings(): array;
 
+    public function templateHeadings(): array;
+
     public function import(Collection $rows, int $versionId): int;
 }

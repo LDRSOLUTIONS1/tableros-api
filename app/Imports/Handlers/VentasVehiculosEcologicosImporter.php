@@ -10,6 +10,21 @@ use Illuminate\Validation\ValidationException;
 
 class VentasVehiculosEcologicosImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'id',
+            'tema',
+            'anio',
+            'mes',
+            'mes_numero',
+            'entidadfederativa',
+            'unidadesvehiculareselectricas',
+            'unidadesvehiculareshibridasplugin',
+            'unidadesvehiculareshibridas',
+        ];
+    }
+
     public function requiredHeadings(): array
     {
         return [

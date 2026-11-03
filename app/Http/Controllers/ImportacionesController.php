@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\ExcelSource;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Exports\ExcelSourceLayoutExport;
+use Illuminate\Support\Str;
+use App\Contracts\ExcelSourceImporter;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImportacionesController extends Controller
 {
@@ -97,6 +101,49 @@ class ImportacionesController extends Controller
                 'descripcion.max' => 'La descripción no puede tener más de 500 caracteres',
                 'estado.in'       => 'El estado debe ser 1 (Inactivo) o 2 (Activo).',
             ]
+        );
+    }
+
+    public function downloadLayout(ExcelSource $excelSource)
+    {
+        if ((int) $excelSource->estado !== 2) {
+            return response()->json([
+                'message' => 'La fuente de Excel no está activa.',
+            ], 422);
+        }
+
+        $handlerClass = config(
+            'excel_importers.' . $excelSource->codigo
+        );
+
+        if (
+            !$handlerClass ||
+            !is_a(
+                $handlerClass,
+                ExcelSourceImporter::class,
+                true
+            )
+        ) {
+            return response()->json([
+                'message' => 'Esta fuente no tiene un procesador configurado.',
+            ], 422);
+        }
+
+        $handler = app($handlerClass);
+
+        $headings = $handler->templateHeadings();
+
+        if (empty($headings)) {
+            return response()->json([
+                'message' => 'Esta fuente no tiene un layout configurado.',
+            ], 422);
+        }
+
+        $filename = Str::slug($excelSource->codigo) . '-layout.xlsx';
+
+        return Excel::download(
+            new ExcelSourceLayoutExport($headings),
+            $filename
         );
     }
 }

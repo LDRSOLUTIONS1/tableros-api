@@ -10,6 +10,22 @@ use Illuminate\Validation\ValidationException;
 
 class ProduccionImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'prod_est',
+            'cobertura',
+            'ano',
+            'mes',
+            'marca',
+            'modelo',
+            'tipo',
+            'segmento',
+            'produccion',
+            'numero_mes',
+        ];
+    }
+
     public function requiredHeadings(): array
     {
         return [
@@ -37,7 +53,7 @@ class ProduccionImporter implements ExcelSourceImporter
             $hasData = collect($row)->contains(
                 fn($value) => $value !== null
                     && trim((string) $value) !== ''
-            );  
+            );
 
             if (!$hasData) {
                 continue;

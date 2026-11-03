@@ -10,6 +10,32 @@ use Illuminate\Validation\ValidationException;
 
 class MarcasModelosImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'tema',
+            'ano',
+            'mes',
+            'marca_im',
+            'marca_inegi',
+            'mod_im',
+            'mod_inegi',
+            'version_im',
+            'segmento_e',
+            'segmento_b',
+            'segmento_c',
+            'segmento_inegi',
+            'tipo',
+            'pais_marca',
+            'origen',
+            'pais_origen',
+            'energia',
+            'ventas',
+            'columna1',
+            'mes_numero',
+        ];
+    }
+
     public function requiredHeadings(): array
     {
         return [

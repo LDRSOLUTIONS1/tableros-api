@@ -10,6 +10,20 @@ use Illuminate\Validation\ValidationException;
 
 class EcologicosImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'tema',
+            'ano',
+            'mes',
+            'entidad_federativa',
+            'unidades_vehiculares_electricas',
+            'unidades_vehiculares_hibridas_plugin1',
+            'unidades_vehiculares_hibridas2',
+            'mes_numero',
+        ];
+    }
+
     public function requiredHeadings(): array
     {
         return [

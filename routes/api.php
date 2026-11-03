@@ -27,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/{excelSource}/versiones', [ExcelImportController::class, 'versiones']);
     Route::get('/importaciones/{excelSource}/versiones/{version}/descargar', [ExcelImportController::class, 'descargar'])->name('importaciones.versiones.descargar');
 
+    Route::get('/importaciones/{excelSource:id}/layout', [ImportacionesController::class, 'downloadLayout'])->whereNumber('excelSource')->name('importaciones.layout');
+
     Route::get('/indexLimited', [UsersController::class, 'indexLimited']);
     Route::get('/indexName', [TablerosController::class, 'indexName']);
     Route::post('/dashboard/assign', [TablerosController::class, 'assign']);

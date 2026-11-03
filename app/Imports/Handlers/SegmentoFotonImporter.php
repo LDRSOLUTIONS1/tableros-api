@@ -10,6 +10,26 @@ use Illuminate\Validation\ValidationException;
 
 class SegmentoFotonImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'tema',
+            'anio',
+            'mes',
+            'marca',
+            'modelo',
+            'tipo',
+            'segmento_inegi',
+            'segmento_foton_1',
+            'origen',
+            'pais_origen',
+            'cantidad',
+            'mes_numero',
+            'marca_mercado_foton',
+            'unidad_foton',
+        ];
+    }
+
     public function requiredHeadings(): array
     {
         return [

@@ -10,6 +10,18 @@ use Illuminate\Validation\ValidationException;
 
 class ImagenesModelosImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'company',
+            'model',
+            'version',
+            'foton',
+            'imageurl',
+            'imagelogo',
+        ];
+    }
+    
     public function requiredHeadings(): array
     {
         return [

@@ -10,6 +10,27 @@ use Illuminate\Validation\ValidationException;
 
 class VentasVehiculosImporter implements ExcelSourceImporter
 {
+    public function templateHeadings(): array
+    {
+        return [
+            'tema',
+            'ano',
+            'mes',
+            'mes_numero',
+            'marca',
+            'modelo',
+            'tipo',
+            'segmentoinegi',
+            'origen',
+            'pais_origen',
+            'cantidad',
+            'mercadoinegi',
+            'marcamercadofoton',
+            'unidadfotoninegi',
+            'seg_p_v',
+        ];
+    }
+    
     public function requiredHeadings(): array
     {
         return [
