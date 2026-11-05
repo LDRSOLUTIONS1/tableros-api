@@ -21,6 +21,7 @@ class ProduccionVehiculo extends Model
         'tipo',
         'segmento',
         'produccion',
+        'estatus',
         'numero_mes',
     ];
 

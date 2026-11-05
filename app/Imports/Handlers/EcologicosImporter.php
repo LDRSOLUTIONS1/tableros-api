@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -82,7 +83,7 @@ class EcologicosImporter implements ExcelSourceImporter
                 ),
             ];
 
-            $validator = Validator::make($data, [
+            $rules = [
                 'tema'                                  => 'required|string|max:255',
                 'anio'                                  => 'required|integer|min:1900|max:2100',
                 'mes'                                   => 'required|string|max:30',
@@ -91,31 +92,23 @@ class EcologicosImporter implements ExcelSourceImporter
                 'unidades_vehiculares_hibridas_plugin'  => 'required|integer|min:0',
                 'unidades_vehiculares_hibridas'         => 'required|integer|min:0',
                 'numero_mes'                            => 'required|integer|min:1|max:12',
-            ], [
-                'tema.required'                                 => 'El campo tema es requerido.',
-                'tema.max'                                      => 'El campo tema no puede exceder 255 caracteres.',
-                'anio.required'                                 => 'El campo año es requerido.',
-                'anio.integer'                                  => 'El campo año debe ser un número entero.',
-                'anio.min'                                      => 'El año debe ser igual o mayor a 1900.',
-                'anio.max'                                      => 'El año no puede ser mayor a 2100.',
-                'mes.required'                                  => 'El campo mes es requerido.',
-                'mes.max'                                       => 'El campo mes no puede exceder 30 caracteres.',
-                'entidad_federativa.required'                   => 'La entidad federativa es requerida.',
-                'entidad_federativa.max'                        => 'La entidad federativa no puede exceder 100 caracteres.',
-                'unidades_vehiculares_electricas.required'      => 'Las unidades vehiculares eléctricas son requeridas.',
-                'unidades_vehiculares_electricas.integer'       => 'Las unidades vehiculares eléctricas deben ser un número entero.',
-                'unidades_vehiculares_electricas.min'           => 'Las unidades vehiculares eléctricas no pueden ser negativas.',
-                'unidades_vehiculares_hibridas_plugin.required' => 'Las unidades vehiculares híbridas plugin son requeridas.',
-                'unidades_vehiculares_hibridas_plugin.integer'  => 'Las unidades vehiculares híbridas plugin deben ser un número entero.',
-                'unidades_vehiculares_hibridas_plugin.min'      => 'Las unidades vehiculares híbridas plugin no pueden ser negativas.',
-                'unidades_vehiculares_hibridas.required'        => 'Las unidades vehiculares híbridas son requeridas.',
-                'unidades_vehiculares_hibridas.integer'         => 'Las unidades vehiculares híbridas deben ser un número entero.',
-                'unidades_vehiculares_hibridas.min'             => 'Las unidades vehiculares híbridas no pueden ser negativas.',
-                'numero_mes.required'                           => 'El campo mes_numero es requerido.',
-                'numero_mes.integer'                            => 'El campo mes_numero debe ser un número entero.',
-                'numero_mes.min'                                => 'El campo mes_numero debe estar entre 1 y 12.',
-                'numero_mes.max'                                => 'El campo mes_numero debe estar entre 1 y 12.',
-            ]);
+            ];
+
+            $attributes = [
+                'anio'                                  => 'año',
+                'numero_mes'                            => 'mes número',
+                'entidad_federativa'                    => 'entidad federativa',
+                'unidades_vehiculares_electricas'       => 'unidades vehiculares eléctricas',
+                'unidades_vehiculares_hibridas_plugin'  => 'unidades vehiculares híbridas plugin',
+                'unidades_vehiculares_hibridas'         => 'unidades vehiculares híbridas',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([

@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -60,6 +61,7 @@ class ComparativosImporter implements ExcelSourceImporter
             'payload_per_dollar',
             'n_airbags',
             'n_adas',
+            'engine_brand',
         ];
     }
 
@@ -281,72 +283,74 @@ class ComparativosImporter implements ExcelSourceImporter
                 ),
             ];
 
-            $validator = Validator::make($data, [
-                'codigo'                            => 'required|string|max:50',
-                'company'                          => 'required|string|max:100',
-                'model'                            => 'required|string|max:150',
-                'version'                           => 'required|string|max:150',
-                'year'                              => 'nullable|integer|min:1900|max:2100',
-                'price'                            => 'required|numeric|min:0',
-                'bonus'                              => 'required|numeric|min:0',
-                'price_with_bonus'                   => 'required|numeric|min:0',
-                'sales_model_ytd_2025'            => 'nullable|integer|min:0',
-                'sales_version_ytd_2025'           => 'nullable|integer|min:0',
-                'market_share_by_segment'    => 'nullable|numeric|min:0|max:100',
-                'foton'                             => 'nullable|string|max:100',
-                'origin'                            => 'nullable|string|max:100',
-                'avaliable'                        => 'nullable|string|max:50',
-                'segment'                          => 'nullable|string|max:100',
-                'sub_segment'                      => 'nullable|string|max:100',
-                'bodywork'                        => 'nullable|string|max:100',
-                'drive'                          => 'nullable|string|max:50',
-                'energy_system'                   => 'nullable|string|max:50',
-                'engine_baterry'                     => 'nullable|string|max:255',
-                'displacement'                        => 'nullable|integer|min:0',
-                'battery_capacity_kw_h'             => 'nullable|numeric|min:0',
-                'transmission'                       => 'nullable|string|max:100',
-                'turbo'                             => 'nullable|string|max:50',
-                'autonomy'                         => 'nullable|numeric|min:0',
-                'aceleration_time'                => 'nullable|numeric|min:0',
-                'maximum_speed'                  => 'nullable|integer|min:0',
-                'hp'                                => 'nullable|integer|min:0',
-                'lb_ft'                             => 'nullable|numeric|min:0',
-                'long'                          => 'nullable|integer|min:0',
-                'tank'                            => 'nullable|numeric|min:0',
-                'payload_capacity'                   => 'nullable|numeric|min:0',
-                'towing_capacity'                => 'nullable|numeric|min:0',
-                'seats'                          => 'nullable|integer|min:0',
-                'vol_m3'                        => 'nullable|numeric|min:0',
-                'class'                             => 'nullable|string|max:100',
-                'gwv'                               => 'nullable|integer|min:0',
-                'emission_standard'                   => 'nullable|string|max:100',
-                'range'                             => 'nullable|numeric|min:0',
-                'range_precio'                      => 'nullable|numeric|min:0',
-                'charging_time_hrs'                => 'nullable|numeric|min:0',
-                'towing_capacity_precio'         => 'nullable|numeric|min:0',
-                'precio_hp'                     => 'nullable|numeric|min:0',
-                'precio_lb_pie'                 => 'nullable|numeric|min:0',
-                'payload_precio'        => 'nullable|numeric|min:0',
-                'n_airbags'                    => 'nullable|integer|min:0',
-                'n_adas'                       => 'nullable|integer|min:0',
-                'engine_brand'                       => 'nullable|string|max:150',
-            ], [
-                'required' => 'El campo :attribute es requerido.',
-                'string'   => 'El campo :attribute debe ser texto.',
-                'integer'  => 'El campo :attribute debe ser un número entero.',
-                'numeric'  => 'El campo :attribute debe ser numérico.',
-                'min'      => 'El campo :attribute no cumple con el mínimo permitido.',
-                'max'      => 'El campo :attribute excede el límite permitido.',
-            ], [
-                'codigo'          => 'id',
-                'company'        => 'Company',
-                'model'          => 'Model',
-                'version'         => 'Version',
-                'year'            => 'Year',
-                'price'          => 'Price',
-                'bonus'            => 'Bonus',
-                'price_with_bonus' => 'Price_With_Bonus',
-            ]);
+            $rules = [
+                'codigo'                    => 'required|string|max:50',
+                'company'                   => 'required|string|max:100',
+                'model'                     => 'required|string|max:150',
+                'version'                   => 'required|string|max:150',
+                'year'                      => 'nullable|integer|min:1900|max:2100',
+                'price'                     => 'required|numeric|min:0',
+                'bonus'                     => 'required|numeric|min:0',
+                'price_with_bonus'          => 'required|numeric|min:0',
+                'sales_model_ytd_2025'      => 'nullable|integer|min:0',
+                'sales_version_ytd_2025'    => 'nullable|integer|min:0',
+                'market_share_by_segment'   => 'nullable|numeric|min:0|max:100',
+                'foton'                     => 'nullable|string|max:100',
+                'origin'                    => 'nullable|string|max:100',
+                'avaliable'                 => 'nullable|string|max:50',
+                'segment'                   => 'nullable|string|max:100',
+                'sub_segment'               => 'nullable|string|max:100',
+                'bodywork'                  => 'nullable|string|max:100',
+                'drive'                     => 'nullable|string|max:50',
+                'energy_system'             => 'nullable|string|max:50',
+                'engine_baterry'            => 'nullable|string|max:255',
+                'displacement'              => 'nullable|integer|min:0',
+                'battery_capacity_kw_h'     => 'nullable|numeric|min:0',
+                'transmission'              => 'nullable|string|max:100',
+                'turbo'                     => 'nullable|string|max:50',
+                'autonomy'                  => 'nullable|numeric|min:0',
+                'aceleration_time'          => 'nullable|numeric|min:0',
+                'maximum_speed'             => 'nullable|integer|min:0',
+                'hp'                        => 'nullable|integer|min:0',
+                'lb_ft'                     => 'nullable|numeric|min:0',
+                'long'                      => 'nullable|integer|min:0',
+                'tank'                      => 'nullable|numeric|min:0',
+                'payload_capacity'          => 'nullable|numeric|min:0',
+                'towing_capacity'           => 'nullable|numeric|min:0',
+                'seats'                     => 'nullable|integer|min:0',
+                'vol_m3'                    => 'nullable|numeric|min:0',
+                'class'                     => 'nullable|string|max:100',
+                'gwv'                       => 'nullable|integer|min:0',
+                'emission_standard'         => 'nullable|string|max:100',
+                'range'                     => 'nullable|numeric|min:0',
+                'range_precio'              => 'nullable|numeric|min:0',
+                'charging_time_hrs'         => 'nullable|numeric|min:0',
+                'towing_capacity_precio'    => 'nullable|numeric|min:0',
+                'precio_hp'                 => 'nullable|numeric|min:0',
+                'precio_lb_pie'             => 'nullable|numeric|min:0',
+                'payload_precio'            => 'nullable|numeric|min:0',
+                'n_airbags'                 => 'nullable|integer|min:0',
+                'n_adas'                    => 'nullable|integer|min:0',
+                'engine_brand'              => 'nullable|string|max:150',
+            ];
+
+            $attributes = [
+                'codigo'            => 'id',
+                'company'           => 'Company',
+                'model'             => 'Model',
+                'version'           => 'Version',
+                'year'              => 'Year',
+                'price'             => 'Price',
+                'bonus'             => 'Bonus',
+                'price_with_bonus'  => 'Price With Bonus',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([

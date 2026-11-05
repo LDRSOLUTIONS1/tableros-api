@@ -26,7 +26,9 @@ return new class extends Migration
             $table->string('modelo', 150)->nullable();
             $table->string('tipo', 100)->nullable();
             $table->string('segmento', 100)->nullable();
+            $table->unsignedBigInteger('id_pais_destino')->nullable();
             $table->unsignedBigInteger('exportacion')->default(0);
+            $table->string('estatus', 100)->nullable();
             $table->string('pais_destino', 100)->nullable();
 
             $table->timestamps();

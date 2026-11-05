@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -142,59 +143,54 @@ class MarcasModelosImporter implements ExcelSourceImporter
                 ),
             ];
 
-            $validator = Validator::make($data, [
-                'tema'              => 'required|string|max:255',
-                'anio'              => 'required|integer|min:1900|max:2100',
-                'mes'               => 'required|string|max:30',
-                'marca_im'          => 'required|string|max:100',
-                'marca_inegi'       => 'required|string|max:100',
-                'mod_im'            => 'required|string|max:150',
-                'mod_inegi'         => 'required|string|max:150',
-                'version_im'        => 'required|string|max:150',
-                'segmento_e'        => 'required|string|max:100',
-                'segmento_b'        => 'required|string|max:100',
-                'segmento_c'        => 'required|string|max:100',
-                'segmento_inegi'    => 'required|string|max:100',
-                'tipo'              => 'required|string|max:100',
-                'pais_marca'        => 'required|string|max:100',
-                'origen'            => 'required|string|max:100',
-                'pais_origen'       => 'required|string|max:100',
-                'energia'           => 'required|string|max:50',
-                'ventas'            => 'required|integer|min:0',
-                'columna1'          => 'required|string|max:100',
-                'numero_mes'        => 'required|integer|min:1|max:12',
-            ], [
-                'tema.required'             => 'El campo tema es requerido.',
-                'tema.max'                  => 'El campo tema no puede exceder 255 caracteres.',
-                'anio.required'             => 'El campo año es requerido.',
-                'anio.integer'              => 'El campo año debe ser un número entero.',
-                'anio.min'                  => 'El año debe ser igual o mayor a 1900.',
-                'anio.max'                  => 'El año no puede ser mayor a 2100.',
-                'mes.required'              => 'El campo mes es requerido.',
-                'mes.max'                   => 'El campo mes no puede exceder 30 caracteres.',
-                'marca_im.required'         => 'El campo marca_im es requerido.',
-                'marca_inegi.required'      => 'El campo marca_inegi es requerido.',
-                'mod_im.required'           => 'El campo mod_im es requerido.',
-                'mod_inegi.required'        => 'El campo mod_inegi es requerido.',
-                'version_im.required'       => 'El campo version_im es requerido.',
-                'segmento_e.required'       => 'El campo segmento_e es requerido.',
-                'segmento_b.required'       => 'El campo segmento_b es requerido.',
-                'segmento_c.required'       => 'El campo segmento_c es requerido.',
-                'segmento_inegi.required'   => 'El campo segmento_inegi es requerido.',
-                'tipo.required'             => 'El campo tipo es requerido.',
-                'pais_marca.required'       => 'El país de la marca es requerido.',
-                'origen.required'           => 'El campo origen es requerido.',
-                'pais_origen.required'      => 'El país de origen es requerido.',
-                'energia.required'          => 'El campo energía es requerido.',
-                'ventas.required'           => 'El campo ventas es requerido.',
-                'ventas.integer'            => 'Las ventas deben ser un número entero.',
-                'ventas.min'                => 'Las ventas no pueden ser negativas.',
-                'columna1.required'         => 'El campo columna1 es requerido.',
-                'numero_mes.required'       => 'El campo mes_numero es requerido.',
-                'numero_mes.integer'        => 'El campo mes_numero debe ser un número entero.',
-                'numero_mes.min'            => 'El campo mes_numero debe estar entre 1 y 12.',
-                'numero_mes.max'            => 'El campo mes_numero debe estar entre 1 y 12.',
-            ]);
+            $rules = [
+                'tema'           => 'required|string|max:255',
+                'anio'           => 'required|integer|min:1900|max:2100',
+                'mes'            => 'required|string|max:30',
+                'marca_im'       => 'required|string|max:100',
+                'marca_inegi'    => 'required|string|max:100',
+                'mod_im'         => 'required|string|max:150',
+                'mod_inegi'      => 'required|string|max:150',
+                'version_im'     => 'required|string|max:150',
+                'segmento_e'     => 'required|string|max:100',
+                'segmento_b'     => 'required|string|max:100',
+                'segmento_c'     => 'required|string|max:100',
+                'segmento_inegi' => 'required|string|max:100',
+                'tipo'           => 'required|string|max:100',
+                'pais_marca'     => 'required|string|max:100',
+                'origen'         => 'required|string|max:100',
+                'pais_origen'    => 'required|string|max:100',
+                'energia'        => 'required|string|max:50',
+                'ventas'         => 'required|integer|min:0',
+                'columna1'       => 'required|string|max:100',
+                'numero_mes'     => 'required|integer|min:1|max:12',
+            ];
+
+            $attributes = [
+                'anio'              => 'año',
+                'numero_mes'        => 'mes número',
+                'marca_im'          => 'marca IM',
+                'marca_inegi'       => 'marca INEGI',
+                'mod_im'            => 'modelo IM',
+                'mod_inegi'         => 'modelo INEGI',
+                'version_im'        => 'versión IM',
+                'segmento_e'        => 'segmento E',
+                'segmento_b'        => 'segmento B',
+                'segmento_c'        => 'segmento C',
+                'segmento_inegi'    => 'segmento INEGI',
+                'pais_marca'        => 'país de la marca',
+                'pais_origen'       => 'país de origen',
+                'energia'           => 'energía',
+                'ventas'            => 'ventas',
+                'columna1'          => 'columna 1',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([

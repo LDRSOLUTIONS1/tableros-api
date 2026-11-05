@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -97,7 +98,7 @@ class Ventas_LigerosImporter implements ExcelSourceImporter
                 ),
             ];
 
-            $validator = Validator::make($data, [
+            $rules = [
                 'tema'           => 'required|string|max:255',
                 'anio'           => 'required|integer|min:1900|max:2100',
                 'mes'            => 'required|string|max:30',
@@ -109,25 +110,22 @@ class Ventas_LigerosImporter implements ExcelSourceImporter
                 'pais_origen'    => 'required|string|max:100',
                 'cantidad'       => 'required|integer|min:0',
                 'numero_mes'     => 'required|integer|min:1|max:12',
-            ], [
-                'required' => 'El campo :attribute es requerido.',
-                'integer'  => 'El campo :attribute debe ser un número entero.',
-                'string'   => 'El campo :attribute debe ser texto.',
-                'min'      => 'El campo :attribute no cumple con el mínimo permitido.',
-                'max'      => 'El campo :attribute excede el límite permitido.',
-            ], [
-                'tema'           => 'tema',
-                'anio'           => 'año',
-                'mes'            => 'mes',
-                'marca'          => 'marca',
-                'modelo'         => 'modelo',
-                'tipo'           => 'tipo',
-                'segmento_inegi' => 'segmento INEGI',
-                'origen'         => 'origen',
-                'pais_origen'    => 'país de origen',
-                'cantidad'       => 'cantidad',
-                'numero_mes'     => 'mes_numero',
-            ]);
+            ];
+
+            $attributes = [
+                'anio'              => 'año',
+                'numero_mes'        => 'mes número',
+                'segmento_inegi'    => 'segmento INEGI',
+                'pais_origen'       => 'país de origen',
+                'cantidad'          => 'cantidad',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([

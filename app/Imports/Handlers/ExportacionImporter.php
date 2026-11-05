@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -22,7 +23,9 @@ class ExportacionImporter implements ExcelSourceImporter
             'modelo',
             'tipo',
             'segmento',
+            'id_pais_destino',
             'exportacion',
+            'estatus',
             'pais_destino',
         ];
     }
@@ -38,7 +41,9 @@ class ExportacionImporter implements ExcelSourceImporter
             'modelo',
             'tipo',
             'segmento',
+            'id_pais_destino',
             'exportacion',
+            'estatus',
             'pais_destino',
         ];
     }
@@ -88,45 +93,58 @@ class ExportacionImporter implements ExcelSourceImporter
                 'segmento' => $this->textOrNull(
                     $row['segmento'] ?? null
                 ),
+                'id_pais_destino' => $this->integerOrNull(
+                    $row['id_pais_destino'] ?? null
+                ),
                 'exportacion' => $this->integerOrNull(
                     $row['exportacion'] ?? null
+                ),
+                'estatus' => $this->textOrNull(
+                    $row['estatus'] ?? null
                 ),
                 'pais_destino' => $this->textOrNull(
                     $row['pais_destino'] ?? null
                 ),
             ];
 
-            $validator = Validator::make($data, [
-                'prod_est'      => 'nullable|string|max:255',
-                'cobertura'     => 'nullable|string|max:100',
-                'anio'          => 'required|integer|min:1900|max:2100',
-                'mes_numero'    => 'nullable|integer|between:1,12',
-                'mes'           => 'required|string|max:30',
-                'marca'         => 'nullable|string|max:100',
-                'modelo'        => 'nullable|string|max:150',
-                'tipo'          => 'nullable|string|max:100',
-                'segmento'      => 'nullable|string|max:100',
-                'exportacion'   => 'nullable|integer|min:0',
-                'pais_destino'  => 'nullable|string|max:100',
-            ], [
-                'prod_est.max'          => 'El prod_est no puede tener más de 255 caracteres.',
-                'cobertura.max'         => 'La cobertura no puede tener más de 100 caracteres.',
-                'anio.required'         => 'El año es obligatorio.',
-                'anio.integer'          => 'El año debe ser un número entero.',
-                'anio.min'              => 'El año debe ser mayor o igual a 1900.',
-                'anio.max'              => 'El año debe ser menor o igual a 2100.',
-                'mes_numero.integer'    => 'El número de mes debe ser un número entero.',
-                'mes_numero.between'    => 'El número de mes debe estar entre 1 y 12.',
-                'mes.required'          => 'El mes es obligatorio.',
-                'mes.max'               => 'El mes no puede tener más de 30 caracteres.',
-                'marca.max'             => 'La marca no puede tener más de 100 caracteres.',
-                'modelo.max'            => 'El modelo no puede tener más de 150 caracteres.',
-                'tipo.max'              => 'El tipo no puede tener más de 100 caracteres.',
-                'segmento.max'          => 'El segmento no puede tener más de 100 caracteres.',
-                'exportacion.integer'   => 'La exportación debe ser un número entero.',
-                'exportacion.min'       => 'La exportación no puede ser negativa.',
-                'pais_destino.max'      => 'El país de destino no puede tener más de 100 caracteres.',
-            ]);
+            $rules = [
+                'prod_est'          => 'nullable|string|max:255',
+                'cobertura'         => 'nullable|string|max:100',
+                'anio'              => 'required|integer|min:1900|max:2100',
+                'mes_numero'        => 'nullable|integer|between:1,12',
+                'mes'               => 'required|string|max:30',
+                'marca'             => 'nullable|string|max:100',
+                'modelo'            => 'nullable|string|max:150',
+                'tipo'              => 'nullable|string|max:100',
+                'segmento'          => 'nullable|string|max:100',
+                'id_pais_destino'   => 'nullable|integer|min:0',
+                'exportacion'       => 'nullable|integer|min:0',
+                'estatus'           => 'nullable|string|max:100',
+                'pais_destino'      => 'nullable|string|max:100',
+            ];
+
+            $attributes = [
+                'prod_est'          => 'prod_est',
+                'cobertura'         => 'cobertura',
+                'anio'              => 'año',
+                'mes_numero'        => 'mes número',
+                'mes'               => 'mes',
+                'marca'             => 'marca',
+                'modelo'            => 'modelo',
+                'tipo'              => 'tipo',
+                'segmento'          => 'segmento',
+                'id_pais_destino'   => 'id país de destino',
+                'exportacion'       => 'exportación',
+                'estatus'           => 'estatus',
+                'pais_destino'      => 'país de destino',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([
@@ -165,6 +183,13 @@ class ExportacionImporter implements ExcelSourceImporter
                 ),
                 'segmento' => $this->normalizeIdentityText(
                     $data['segmento'] ?? null
+                ),
+                'id_pais_destino' => isset($data['id_pais_destino'])
+                    ? (int) $data['id_pais_destino']
+                    : null,
+                'exportacion' => (int) $data['exportacion'],
+                'estatus' => $this->normalizeIdentityText(
+                    $data['estatus'] ?? null
                 ),
                 'pais_destino' => $this->normalizeIdentityText(
                     $data['pais_destino'] ?? null
@@ -209,6 +234,8 @@ class ExportacionImporter implements ExcelSourceImporter
             'segmento',
             'exportacion',
             'pais_destino',
+            'id_pais_destino',
+            'estatus',
             'excel_import_version_id',
             'updated_at',
         ];

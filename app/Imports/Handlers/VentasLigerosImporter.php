@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -122,47 +123,43 @@ class VentasLigerosImporter implements ExcelSourceImporter
                 ),
             ];
 
+            $rules = [
+                'tema'                => 'required|string|max:255',
+                'anio'                => 'required|integer|min:1900|max:2100',
+                'mes'                 => 'required|string|max:30',
+                'mes_numero'          => 'required|integer|min:1|max:12',
+                'marca'               => 'required|string|max:100',
+                'modelo'              => 'required|string|max:150',
+                'tipo'                => 'required|string|max:100',
+                'segmento_inegi'      => 'required|string|max:100',
+                'origen'              => 'required|string|max:50',
+                'pais_origen'         => 'required|string|max:100',
+                'cantidad'            => 'required|integer|min:0',
+                'mercado_inegi'       => 'required|string|max:100',
+                'marca_mercado_foton' => 'required|string|max:100',
+                'unidad_foton_inegi'  => 'nullable|string|max:150',
+                'seg_pv'              => 'nullable|string|max:100',
+                'origen_2'            => 'nullable|string|max:100',
+            ];
+
+            $attributes = [
+                'anio'                  => 'año',
+                'mes_numero'            => 'mes número',
+                'segmento_inegi'        => 'segmento INEGI',
+                'pais_origen'           => 'país de origen',
+                'cantidad'              => 'cantidad',
+                'mercado_inegi'         => 'mercado INEGI',
+                'marca_mercado_foton'   => 'marca mercado Foton',
+                'unidad_foton_inegi'    => 'unidad Foton INEGI',
+                'seg_pv'                => 'segmento P y V',
+                'origen_2'              => 'origen 2',
+            ];
+
             $validator = Validator::make(
                 $data,
-                [
-                    'tema'                  => 'required|string|max:255',
-                    'anio'                  => 'required|integer|min:1900|max:2100',
-                    'mes'                   => 'required|string|max:30',
-                    'mes_numero'            => 'required|integer|min:1|max:12',
-                    'marca'                 => 'required|string|max:100',
-                    'modelo'                => 'required|string|max:150',
-                    'tipo'                  => 'required|string|max:100',
-                    'segmento_inegi'        => 'required|string|max:100',
-                    'origen'                => 'required|string|max:50',
-                    'pais_origen'           => 'required|string|max:100',
-                    'cantidad'              => 'required|integer|min:0',
-                    'mercado_inegi'         => 'required|string|max:100',
-                    'marca_mercado_foton'   => 'required|string|max:100',
-                    'unidad_foton_inegi'    => 'nullable|string|max:150',
-                    'seg_pv'                => 'nullable|string|max:100',
-                    'origen_2'              => 'nullable|string|max:100',
-                ],
-                [
-                    'tema.required'                 => 'El campo tema es requerido.',
-                    'anio.required'                 => 'El campo año es requerido.',
-                    'anio.integer'                  => 'El año debe ser un número entero.',
-                    'mes.required'                  => 'El campo mes es requerido.',
-                    'mes_numero.required'           => 'El número de mes es requerido.',
-                    'mes_numero.integer'            => 'El número de mes debe ser un entero.',
-                    'mes_numero.min'                => 'El número de mes debe estar entre 1 y 12.',
-                    'mes_numero.max'                => 'El número de mes debe estar entre 1 y 12.',
-                    'marca.required'                => 'El campo marca es requerido.',
-                    'modelo.required'               => 'El campo modelo es requerido.',
-                    'tipo.required'                 => 'El campo tipo es requerido.',
-                    'segmento_inegi.required'       => 'El campo SegmentoInegi es requerido.',
-                    'origen.required'               => 'El campo origen es requerido.',
-                    'pais_origen.required'          => 'El campo País_origen es requerido.',
-                    'cantidad.required'             => 'El campo cantidad es requerido.',
-                    'cantidad.integer'              => 'La cantidad debe ser un número entero.',
-                    'cantidad.min'                  => 'La cantidad no puede ser negativa.',
-                    'mercado_inegi.required'        => 'El campo MercadoInegi es requerido.',
-                    'marca_mercado_foton.required'  => 'El campo MarcaMercadoFoton es requerido.',
-                ]
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
             );
 
             if ($validator->fails()) {

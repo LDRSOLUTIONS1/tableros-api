@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('tipo', 100)->nullable();
             $table->string('segmento', 100)->nullable();
             $table->unsignedBigInteger('produccion')->default(0);
+            $table->string('estatus', 100)->nullable();
             $table->unsignedTinyInteger('numero_mes')->nullable();
 
             $table->timestamps();

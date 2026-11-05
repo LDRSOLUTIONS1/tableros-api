@@ -6,6 +6,7 @@ use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Support\ExcelValidation;
 use Illuminate\Validation\ValidationException;
 
 class VentasVehiculosEcologicosImporter implements ExcelSourceImporter
@@ -87,33 +88,34 @@ class VentasVehiculosEcologicosImporter implements ExcelSourceImporter
                 ),
             ];
 
-            $validator = Validator::make($data, [
-                'id_origen'                             => 'required|integer|min:1',
-                'tema'                                  => 'required|string|max:255',
-                'anio'                                  => 'required|integer|min:1900|max:2100',
-                'mes'                                   => 'required|string|max:30',
-                'numero_mes'                            => 'required|integer|min:1|max:12',
-                'entidad_federativa'                    => 'required|string|max:100',
-                'unidades_vehiculares_electricas'       => 'required|integer|min:0',
-                'unidades_vehiculares_hibridas_plugin'  => 'required|integer|min:0',
-                'unidades_vehiculares_hibridas'         => 'required|integer|min:0',
-            ], [
-                'required'  => 'El campo :attribute es requerido.',
-                'integer'   => 'El campo :attribute debe ser un número entero.',
-                'min'       => 'El campo :attribute no cumple con el mínimo permitido.',
-                'max'       => 'El campo :attribute excede el límite permitido.',
-                'string'    => 'El campo :attribute debe ser texto.',
-            ], [
+            $rules = [
+                'id_origen'                            => 'required|integer|min:1',
+                'tema'                                 => 'required|string|max:255',
+                'anio'                                 => 'required|integer|min:1900|max:2100',
+                'mes'                                  => 'required|string|max:30',
+                'numero_mes'                           => 'required|integer|min:1|max:12',
+                'entidad_federativa'                   => 'required|string|max:100',
+                'unidades_vehiculares_electricas'      => 'required|integer|min:0',
+                'unidades_vehiculares_hibridas_plugin' => 'required|integer|min:0',
+                'unidades_vehiculares_hibridas'        => 'required|integer|min:0',
+            ];
+
+            $attributes = [
                 'id_origen'                             => 'id',
-                'tema'                                  => 'tema',
                 'anio'                                  => 'año',
-                'mes'                                   => 'mes',
-                'numero_mes'                            => 'mes_numero',
+                'numero_mes'                            => 'mes número',
                 'entidad_federativa'                    => 'entidad federativa',
                 'unidades_vehiculares_electricas'       => 'unidades vehiculares eléctricas',
                 'unidades_vehiculares_hibridas_plugin'  => 'unidades vehiculares híbridas plugin',
                 'unidades_vehiculares_hibridas'         => 'unidades vehiculares híbridas',
-            ]);
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([

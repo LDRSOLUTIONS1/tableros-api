@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -22,6 +23,7 @@ class ProduccionImporter implements ExcelSourceImporter
             'tipo',
             'segmento',
             'produccion',
+            'estatus',
             'numero_mes',
         ];
     }
@@ -38,6 +40,7 @@ class ProduccionImporter implements ExcelSourceImporter
             'tipo',
             'segmento',
             'produccion',
+            'estatus',
             'numero_mes',
         ];
     }
@@ -87,34 +90,49 @@ class ProduccionImporter implements ExcelSourceImporter
                 'produccion' => $this->integerOrNull(
                     $row['produccion'] ?? null
                 ),
-                'numero_mes' => $this->integerOrNull(
+                'estatus' => $this->textOrNull(
+                    $row['estatus'] ?? null
+                ),
+                 'numero_mes' => $this->integerOrNull(
                     $row['numero_mes'] ?? null
                 ),
             ];
 
-            $validator = Validator::make($data, [
-                'prod_est'      => 'nullable|string|max:255',
-                'cobertura'     => 'nullable|string|max:100',
-                'anio'          => 'required|integer|min:1900|max:2100',
-                'mes'           => 'required|string|max:30',
-                'marca'         => 'nullable|string|max:100',
-                'modelo'        => 'nullable|string|max:150',
-                'tipo'          => 'nullable|string|max:100',
-                'segmento'      => 'nullable|string|max:100',
-                'produccion'    => 'required|integer|min:0',
-                'numero_mes'    => 'required|integer|min:1|max:12',
-            ], [
-                'prod_est.required'      => 'El campo prod_est es requerido.',
-                'cobertura.required'     => 'El campo cobertura es requerido.',
-                'anio.required'          => 'El campo año es requerido.',
-                'mes.required'           => 'El campo mes es requerido.',
-                'marca.required'         => 'El campo marca es requerido.',
-                'modelo.required'        => 'El campo modelo es requerido.',
-                'tipo.required'          => 'El campo tipo es requerido.',
-                'segmento.required'      => 'El campo segmento es requerido.',
-                'produccion.required'    => 'El campo produccion es requerido.',
-                'numero_mes.required'    => 'El campo numero_mes es requerido.',
-            ]);
+            $rules = [
+                'prod_est'   => 'nullable|string|max:255',
+                'cobertura'  => 'nullable|string|max:100',
+                'anio'       => 'required|integer|min:1900|max:2100',
+                'mes'        => 'required|string|max:30',
+                'marca'      => 'nullable|string|max:100',
+                'modelo'     => 'nullable|string|max:150',
+                'tipo'       => 'nullable|string|max:100',
+                'segmento'   => 'nullable|string|max:100',
+                'produccion' => 'required|integer|min:0',
+                'estatus'    => 'nullable|string|max:100',
+                'numero_mes' => 'required|integer|min:1|max:12',
+
+            ];
+
+            $attributes = [
+                'prod_est'      => 'prod_est',
+                'cobertura'     => 'cobertura',
+                'anio'          => 'año',
+                'mes'           => 'mes',
+                'marca'         => 'marca',
+                'modelo'        => 'modelo',
+                'tipo'          => 'tipo',
+                'segmento'      => 'segmento',
+                'produccion'    => 'producción',
+                'estatus'       => 'estatus',
+                'numero_mes'    => 'mes número',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([
@@ -188,6 +206,7 @@ class ProduccionImporter implements ExcelSourceImporter
             'tipo',
             'segmento',
             'produccion',
+            'estatus',
             'numero_mes',
             'excel_import_version_id',
             'updated_at',

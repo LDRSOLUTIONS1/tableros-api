@@ -6,6 +6,7 @@ use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Support\ExcelValidation;
 use Illuminate\Validation\ValidationException;
 
 class VentasVehiculosImporter implements ExcelSourceImporter
@@ -30,7 +31,7 @@ class VentasVehiculosImporter implements ExcelSourceImporter
             'seg_p_v',
         ];
     }
-    
+
     public function requiredHeadings(): array
     {
         return [
@@ -117,45 +118,42 @@ class VentasVehiculosImporter implements ExcelSourceImporter
                 ),
             ];
 
-            $validator = Validator::make($data, [
-                'tema'                  => 'required|string|max:255',
-                'anio'                  => 'required|integer|min:1900|max:2100',
-                'mes'                   => 'required|string|max:30',
-                'numero_mes'            => 'required|integer|min:1|max:12',
-                'marca'                 => 'required|string|max:100',
-                'modelo'                => 'required|string|max:150',
-                'tipo'                  => 'required|string|max:100',
-                'segmento_inegi'        => 'required|string|max:100',
-                'origen'                => 'required|string|max:100',
-                'pais_origen'           => 'required|string|max:100',
-                'cantidad'              => 'required|integer|min:0',
-                'mercado_inegi'         => 'required|string|max:100',
-                'marca_mercado_foton'   => 'nullable|string|max:100',
-                'unidad_foton_inegi'    => 'nullable|string|max:150',
-                'seg_p_v'               => 'nullable|string|max:100',
-            ], [
-                'required' => 'El campo :attribute es requerido.',
-                'integer'  => 'El campo :attribute debe ser un número entero.',
-                'min'      => 'El campo :attribute no cumple con el mínimo permitido.',
-                'max'      => 'El campo :attribute excede el límite permitido.',
-                'string'   => 'El campo :attribute debe ser texto.',
-            ], [
-                'tema'                => 'tema',
-                'anio'                => 'año',
-                'mes'                 => 'mes',
-                'numero_mes'          => 'mes_numero',
-                'marca'               => 'marca',
-                'modelo'              => 'modelo',
-                'tipo'                => 'tipo',
-                'segmento_inegi'      => 'segmento INEGI',
-                'origen'              => 'origen',
-                'pais_origen'         => 'país de origen',
-                'cantidad'            => 'cantidad',
-                'mercado_inegi'       => 'mercado INEGI',
-                'marca_mercado_foton' => 'marca mercado Foton',
-                'unidad_foton_inegi'  => 'unidad Foton INEGI',
-                'seg_p_v'             => 'segmento P y V',
-            ]);
+            $rules = [
+                'tema'                => 'required|string|max:255',
+                'anio'                => 'required|integer|min:1900|max:2100',
+                'mes'                 => 'required|string|max:30',
+                'numero_mes'          => 'required|integer|min:1|max:12',
+                'marca'               => 'required|string|max:100',
+                'modelo'              => 'required|string|max:150',
+                'tipo'                => 'required|string|max:100',
+                'segmento_inegi'      => 'required|string|max:100',
+                'origen'              => 'required|string|max:100',
+                'pais_origen'         => 'required|string|max:100',
+                'cantidad'            => 'required|integer|min:0',
+                'mercado_inegi'       => 'required|string|max:100',
+                'marca_mercado_foton' => 'nullable|string|max:100',
+                'unidad_foton_inegi'  => 'nullable|string|max:150',
+                'seg_p_v'             => 'nullable|string|max:100',
+            ];
+
+            $attributes = [
+                'anio'                  => 'año',
+                'numero_mes'            => 'mes número',
+                'segmento_inegi'        => 'segmento INEGI',
+                'pais_origen'           => 'país de origen',
+                'cantidad'              => 'cantidad',
+                'mercado_inegi'         => 'mercado INEGI',
+                'marca_mercado_foton'   => 'marca mercado Foton',
+                'unidad_foton_inegi'    => 'unidad Foton INEGI',
+                'seg_p_v'               => 'segmento P y V',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([

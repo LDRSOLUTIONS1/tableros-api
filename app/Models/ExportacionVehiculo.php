@@ -21,7 +21,9 @@ class ExportacionVehiculo extends Model
         'modelo',
         'tipo',
         'segmento',
+        'id_pais_destino',
         'exportacion',
+        'estatus',
         'pais_destino',
     ];
 

@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -87,36 +88,36 @@ class PreciosOfertasImporter implements ExcelSourceImporter
                 ),
             ];
 
-            $validator = Validator::make($data, [
-                'company'               => 'required|string|max:150',
-                'model'                 => 'required|string|max:150',
-                'version'               => 'required|string|max:150',
-                'foton'                 => 'required|string|max:150',
-                'precio'                => 'required|integer|min:0',
-                'bono'                  => 'required|integer|min:0',
-                'meses_sin_intereses'   => 'nullable|integer|min:0|max:255',
-                'cargo_por_apertura'    => 'nullable|numeric|min:0',
-                'tasas_de_interes'      => 'nullable|numeric|min:0|max:100',
-            ], [
-                'company.required' => 'El campo Company es requerido.',
-                'model.required' => 'El campo Model es requerido.',
-                'version.required' => 'El campo Version es requerido.',
-                'foton.required' => 'El campo Foton es requerido.',
-                'precio.required' => 'El campo Precio es requerido.',
-                'precio.integer' => 'El campo Precio debe ser un número entero.',
-                'precio.min' => 'El campo Precio no puede ser negativo.',
-                'bono.required' => 'El campo Bono es requerido.',
-                'bono.integer' => 'El campo Bono debe ser un número entero.',
-                'bono.min' => 'El campo Bono no puede ser negativo.',
-                'meses_sin_intereses.integer' => 'Los meses sin intereses deben ser un número entero.',
-                'meses_sin_intereses.min' => 'Los meses sin intereses no pueden ser negativos.',
-                'meses_sin_intereses.max' => 'Los meses sin intereses no pueden exceder 255.',
-                'cargo_por_apertura.numeric' => 'El cargo por apertura debe ser numérico.',
-                'cargo_por_apertura.min' => 'El cargo por apertura no puede ser negativo.',
-                'tasas_de_interes.numeric' => 'La tasa de interés debe ser numérica.',
-                'tasas_de_interes.min' => 'La tasa de interés no puede ser negativa.',
-                'tasas_de_interes.max' => 'La tasa de interés no puede exceder 100.',
-            ]);
+            $rules = [
+                'company'             => 'required|string|max:150',
+                'model'               => 'required|string|max:150',
+                'version'             => 'required|string|max:150',
+                'foton'               => 'required|string|max:150',
+                'precio'              => 'required|integer|min:0',
+                'bono'                => 'required|integer|min:0',
+                'meses_sin_intereses' => 'nullable|integer|min:0|max:255',
+                'cargo_por_apertura'  => 'nullable|numeric|min:0',
+                'tasas_de_interes'    => 'nullable|numeric|min:0|max:100',
+            ];
+
+            $attributes = [
+                'company'               => 'Company',
+                'model'                 => 'Model',
+                'version'               => 'Version',
+                'foton'                 => 'Foton',
+                'precio'                => 'precio',
+                'bono'                  => 'bono',
+                'meses_sin_intereses'   => 'meses sin intereses',
+                'cargo_por_apertura'    => 'cargo por apertura',
+                'tasas_de_interes'      => 'tasa de interés',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([

@@ -5,6 +5,7 @@ namespace App\Imports\Handlers;
 use App\Contracts\ExcelSourceImporter;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use App\Support\ExcelValidation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -112,7 +113,7 @@ class SegmentoFotonImporter implements ExcelSourceImporter
                 ),
             ];
 
-            $validator = Validator::make($data, [
+            $rules = [
                 'tema'                => 'required|string|max:255',
                 'anio'                => 'required|integer|min:1900|max:2100',
                 'mes'                 => 'required|string|max:30',
@@ -127,30 +128,25 @@ class SegmentoFotonImporter implements ExcelSourceImporter
                 'numero_mes'          => 'required|integer|min:1|max:12',
                 'marca_mercado_foton' => 'nullable|string|max:100',
                 'unidad_foton'        => 'nullable|string|max:150',
-            ], [
-                'tema.required'                => 'El campo tema es requerido.',
-                'tema.max'                     => 'El campo tema no puede exceder 255 caracteres.',
-                'anio.required'                => 'El campo año es requerido.',
-                'anio.integer'                 => 'El campo año debe ser un número entero.',
-                'anio.min'                     => 'El año debe ser igual o mayor a 1900.',
-                'anio.max'                     => 'El año no puede ser mayor a 2100.',
-                'mes.required'                 => 'El campo mes es requerido.',
-                'mes.max'                      => 'El campo mes no puede exceder 30 caracteres.',
-                'marca.required'               => 'El campo marca es requerido.',
-                'modelo.required'              => 'El campo modelo es requerido.',
-                'tipo.required'                => 'El campo tipo es requerido.',
-                'segmento_inegi.required'      => 'El campo segmento_inegi es requerido.',
-                'segmento_foton.required'      => 'El campo segmento_foton es requerido.',
-                'origen.required'              => 'El campo origen es requerido.',
-                'pais_origen.required'         => 'El país de origen es requerido.',
-                'cantidad.required'            => 'El campo cantidad es requerido.',
-                'cantidad.integer'             => 'La cantidad debe ser un número entero.',
-                'cantidad.min'                 => 'La cantidad no puede ser negativa.',
-                'numero_mes.required'          => 'El campo mes_numero es requerido.',
-                'numero_mes.integer'           => 'El campo mes_numero debe ser un número entero.',
-                'numero_mes.min'               => 'El campo mes_numero debe estar entre 1 y 12.',
-                'numero_mes.max'               => 'El campo mes_numero debe estar entre 1 y 12.',
-            ]);
+            ];
+
+            $attributes = [
+                'anio'                  => 'año',
+                'numero_mes'            => 'mes número',
+                'segmento_inegi'        => 'segmento INEGI',
+                'segmento_foton'        => 'segmento Foton',
+                'pais_origen'           => 'país de origen',
+                'cantidad'              => 'cantidad',
+                'marca_mercado_foton'   => 'marca mercado Foton',
+                'unidad_foton'          => 'unidad Foton',
+            ];
+
+            $validator = Validator::make(
+                $data,
+                $rules,
+                ExcelValidation::messages(),
+                $attributes
+            );
 
             if ($validator->fails()) {
                 throw ValidationException::withMessages([
