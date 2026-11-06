@@ -9,6 +9,7 @@ use App\Exports\ExcelSourceLayoutExport;
 use Illuminate\Support\Str;
 use App\Contracts\ExcelSourceImporter;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\PowerBiDashboard;
 
 class ImportacionesController extends Controller
 {
@@ -145,5 +146,58 @@ class ImportacionesController extends Controller
             new ExcelSourceLayoutExport($headings),
             $filename
         );
+    }
+
+    public function porTablero(Request $request)
+    {
+        $user = $request->user();
+        $user->loadMissing('role');
+
+        $validated = $request->validate([
+            'tablero_id' => 'nullable|integer|exists:power_bi_dashboards,id',
+        ]);
+
+        $query = PowerBiDashboard::query()
+            ->select(
+                'id',
+                'nombre',
+                'descripcion',
+                'orden',
+                'estado'
+            )
+            ->where('estado', 2)
+            ->with([
+                'pages' => function ($query) {
+                    $query->where('estado', 2)
+                        ->with([
+                            'excelSources' => function ($query) {
+                                $query->where('excel_sources.estado', 2)
+                                    ->with('currentVersion');
+                            }
+                        ]);
+                }
+            ]);
+
+        // Respetar los tableros asignados al usuario.
+        if (!in_array($user->role?->name, [
+            'Super Administrador',
+            'Administrador',
+            'Consultor',
+        ])) {
+            $query->whereHas('users', function ($q) use ($user) {
+                $q->where('users.id', $user->id);
+            });
+        }
+
+        // Filtrar por tablero cuando se solicite.
+        if (!empty($validated['tablero_id'])) {
+            $query->whereKey($validated['tablero_id']);
+        }
+
+        $tableros = $query
+            ->orderBy('orden')
+            ->get();
+
+        return response()->json($tableros, 200);
     }
 }

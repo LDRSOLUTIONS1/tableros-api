@@ -5,9 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PowerBiDashboard extends Model
 {
+    protected $table = 'power_bi_dashboards';
+
     protected $fillable = [
         'category_id',
         'nombre',
@@ -37,6 +40,14 @@ class PowerBiDashboard extends Model
             'dashboard_id',
             'user_id'
         )->withTimestamps();
+    }
+
+    public function pages(): HasMany
+    {
+        return $this->hasMany(
+            PowerBiDashboardPage::class,
+            'power_bi_dashboard_id'
+        )->orderBy('orden');
     }
 
     public function scopeActivos($query)
