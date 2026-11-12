@@ -22,7 +22,7 @@ class ExcelSource extends Model
     ];
 
     protected $casts = [
-        'activo' => 'boolean',
+        'estado' => 'integer',
     ];
 
     public function dashboardPages(): BelongsToMany
