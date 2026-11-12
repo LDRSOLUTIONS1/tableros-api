@@ -154,7 +154,6 @@ class ExcelSourcePageController extends Controller
                 array_diff($seleccionados, $asociados)
             );
 
-            // Validar el estado únicamente de las nuevas asociaciones.
             if (
                 count($nuevos) > 0 &&
                 ExcelSource::whereIn('id', $nuevos)
@@ -175,7 +174,6 @@ class ExcelSourcePageController extends Controller
 
             foreach ($seleccionados as $sourceId) {
                 if (in_array($sourceId, $asociados, true)) {
-                    // Conservar los valores actuales del pivote.
                     $asignaciones[$sourceId] = [];
                 } else {
                     $asignaciones[$sourceId] = [
@@ -186,7 +184,6 @@ class ExcelSourcePageController extends Controller
                 }
             }
 
-            // Guardar exactamente las fuentes seleccionadas.
             $pagina->excelSources()->sync($asignaciones);
 
             return $pagina
