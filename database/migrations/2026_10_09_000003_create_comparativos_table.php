@@ -18,9 +18,9 @@ return new class extends Migration
             $table->char('registro_hash', 64)
                 ->unique('comparativos_registro_hash_unique');
 
-            $table->string('codigo', 50);
+            $table->string('codigo', 50)->nullable();
             $table->string('company', 150);
-            $table->string('model', 150);
+            $table->string('model', 150)->nullable();
             $table->string('version', 150)->nullable();
             $table->unsignedSmallInteger('year')->nullable();
             $table->unsignedBigInteger('price')->nullable();
