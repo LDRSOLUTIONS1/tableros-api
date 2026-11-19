@@ -19,9 +19,9 @@ return new class extends Migration
                 ->unique('imagenes_modelos_registro_hash_unique');
 
             $table->string('company', 150);
-            $table->string('model', 150);
-            $table->string('version', 150);
-            $table->string('foton', 150);
+            $table->string('model', 150)->nullable();
+            $table->string('version', 150)->nullable();
+            $table->string('foton', 150)->nullable();
             $table->text('image_url')->nullable();
             $table->text('image_logo')->nullable();
 

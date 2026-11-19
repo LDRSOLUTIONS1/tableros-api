@@ -19,11 +19,11 @@ return new class extends Migration
                 ->unique('precios_ofertas_registro_hash_unique');
 
             $table->string('company', 150);
-            $table->string('model', 150);
-            $table->string('version', 150);
-            $table->string('foton', 150);
-            $table->unsignedBigInteger('precio');
-            $table->unsignedBigInteger('bono');
+            $table->string('model', 150)->nullable();
+            $table->string('version', 150)->nullable();
+            $table->string('foton', 150)->nullable();
+            $table->unsignedBigInteger('precio')->nullable();
+            $table->unsignedBigInteger('bono')->nullable();
             $table->unsignedTinyInteger('meses_sin_intereses')->nullable();
             $table->decimal('cargo_por_apertura', 12, 2)->nullable();
             $table->decimal('tasas_de_interes', 5, 2)->nullable();

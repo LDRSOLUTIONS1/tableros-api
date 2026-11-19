@@ -74,12 +74,12 @@ class ImagenesModelosImporter implements ExcelSourceImporter
             ];
 
             $rules = [
-                'company'    => 'required|string|max:150',
-                'model'      => 'required|string|max:150',
-                'version'    => 'required|string|max:150',
-                'foton'      => 'required|string|max:150',
-                'image_url'  => 'nullable|url|max:2048',
-                'image_logo' => 'nullable|url|max:2048',
+                'company'    => 'required',
+                'model'      => 'nullable',
+                'version'    => 'nullable',
+                'foton'      => 'nullable',
+                'image_url'  => 'nullable',
+                'image_logo' => 'nullable',
             ];
 
             $attributes = [
