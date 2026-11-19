@@ -89,15 +89,15 @@ class PreciosOfertasImporter implements ExcelSourceImporter
             ];
 
             $rules = [
-                'company'             => 'required|string|max:150',
-                'model'               => 'required|string|max:150',
-                'version'             => 'required|string|max:150',
-                'foton'               => 'required|string|max:150',
-                'precio'              => 'required|integer|min:0',
-                'bono'                => 'required|integer|min:0',
-                'meses_sin_intereses' => 'nullable|integer|min:0|max:255',
-                'cargo_por_apertura'  => 'nullable|numeric|min:0',
-                'tasas_de_interes'    => 'nullable|numeric|min:0|max:100',
+                'company'             => 'required|string',
+                'model'               => 'nullable|string',
+                'version'             => 'nullable|string',
+                'foton'               => 'nullable|string',
+                'precio'              => 'nullable|string',
+                'bono'                => 'nullable|string',
+                'meses_sin_intereses' => 'nullable|string',
+                'cargo_por_apertura'  => 'nullable|string',
+                'tasas_de_interes'    => 'nullable|string',
             ];
 
             $attributes = [
