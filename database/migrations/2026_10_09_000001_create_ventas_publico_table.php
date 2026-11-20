@@ -17,9 +17,9 @@ return new class extends Migration
             $table->char('registro_hash', 64)
                 ->unique('ventas_publico_registro_hash_unique');
 
-            $table->string('tema', 255)->nullable();
-            $table->unsignedSmallInteger('anio');
-            $table->string('mes', 30);
+            $table->string('tema', 255);
+            $table->unsignedSmallInteger('anio')->nullable();
+            $table->string('mes', 30)->nullable();
             $table->unsignedTinyInteger('mes_numero')->nullable();
             $table->string('marca', 100)->nullable();
             $table->string('modelo', 150)->nullable();

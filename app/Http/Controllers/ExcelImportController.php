@@ -6,6 +6,7 @@ use App\Contracts\ExcelSourceImporter;
 use App\Imports\ExcelRowsReader;
 use App\Models\ExcelImportVersion;
 use App\Models\ExcelSource;
+use App\Jobs\ProcessExcelImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -148,167 +149,49 @@ class ExcelImportController extends Controller
             ], 500);
         }
 
-        $tempImportPath = null;
-
+        // El procesamiento (lectura, validación e inserción) puede tardar
+        // minutos con archivos grandes, por lo que se ejecuta fuera de la
+        // petición HTTP para evitar 504 Gateway Timeout.
         try {
-            $originalPath = Storage::disk('local')->path(
-                $version->file_path
+            $job = ProcessExcelImport::dispatch(
+                $version->id,
+                $handlerClass,
+                $file->getClientOriginalExtension()
             );
 
-            $importPath = $originalPath;
-
-            if (
-                strtolower($file->getClientOriginalExtension()) === 'xlsx'
-            ) {
-                $tempImportPath = app(
-                    XlsxTrailingRowsCleaner::class
-                )->cleanCopy($originalPath);
-
-                $importPath = $tempImportPath;
+            if (config('excel_import.mode') === 'queue') {
+                // Lo procesa un worker: php artisan queue:work
+            } else {
+                // Se ejecuta tras enviar la respuesta, sin requerir worker.
+                $job->afterResponse();
             }
-
-            // Leer el archivo sin conocer la tabla de destino.
-            $reader = new ExcelRowsReader();
-
-            Excel::import($reader, $importPath);
-
-            $rows = $reader->rows
-                ->filter(function ($row) {
-                    return collect($row)->contains(
-                        fn($value) => $value !== null
-                            && trim((string) $value) !== ''
-                    );
-                })
-                ->values();
-
-            if ($rows->isEmpty()) {
-                throw ValidationException::withMessages([
-                    'archivo' => ['El archivo no contiene registros.'],
-                ]);
-            }
-
-            // Verificar los encabezados definidos por el procesador.
-            $handler = app($handlerClass);
-            $firstRow = collect($rows->first())->toArray();
-            $headers = array_keys($firstRow);
-
-            $missing = array_diff(
-                $handler->requiredHeadings(),
-                $headers
-            );
-
-            if (!empty($missing)) {
-                throw ValidationException::withMessages([
-                    'archivo' => [
-                        'Faltan las columnas requeridas: '
-                            . implode(', ', $missing),
-                    ],
-                ]);
-            }
-
-            /*
-                * Los datos, el estado completed y la versión actual se
-                * actualizan en una misma transacción. Si ocurre un error,
-                * se revierten los registros y se conserva el historial.
-                */
-            $totalRows = DB::transaction(function () use (
-                $handler,
-                $rows,
-                $version,
-                $excelSource
-            ) {
-                $total = $handler->import($rows, $version->id);
-
-                $version->update([
-                    'status' => 'completed',
-                    'total_rows' => $total,
-                    'imported_at' => now(),
-                    'error_message' => null,
-                ]);
-
-                $source = ExcelSource::whereKey($excelSource->id)
-                    ->lockForUpdate()
-                    ->firstOrFail();
-
-                $currentVersionNumber = 0;
-
-                if ($source->current_version_id) {
-                    $currentVersionNumber = (int)
-                    ExcelImportVersion::whereKey(
-                        $source->current_version_id
-                    )->value('version_number');
-                }
-
-                // Evita que una importación anterior finalizada tarde
-                // reemplace una versión más reciente.
-                if (
-                    $version->version_number
-                    > $currentVersionNumber
-                ) {
-                    $source->update([
-                        'current_version_id' => $version->id,
-                    ]);
-                }
-
-                return $total;
-            });
-
-            return response()->json([
-                'message' => 'Archivo Excel importado correctamente.',
-                'data' => [
-                    'source_id' => $excelSource->id,
-                    'version_id' => $version->id,
-                    'version_number' => $version->version_number,
-                    'status' => 'completed',
-                    'total_rows' => $totalRows,
-                    'imported_at' => $version->fresh()->imported_at,
-                ],
-            ], 201);
-        } catch (ValidationException $e) {
-            $message = implode(
-                ' ',
-                collect($e->errors())->flatten()->all()
-            );
-
-            $version->update([
-                'status' => 'failed',
-                'error_message' => mb_substr($message, 0, 60000),
-            ]);
-
-            return response()->json([
-                'message' => 'El archivo no cumple con la estructura o los datos requeridos.',
-                'errors' => $e->errors(),
-                'data' => [
-                    'version_id' => $version->id,
-                    'version_number' => $version->version_number,
-                    'status' => 'failed',
-                ],
-            ], 422);
         } catch (Throwable $e) {
             report($e);
 
             $version->update([
                 'status' => 'failed',
-                'error_message' => mb_substr(
-                    $e->getMessage(),
-                    0,
-                    60000
-                ),
+                'error_message' => mb_substr($e->getMessage(), 0, 60000),
             ]);
 
             return response()->json([
-                'message' => 'Ocurrió un error al procesar el archivo. La versión actual se conserva.',
+                'message' => 'No fue posible iniciar el procesamiento del archivo.',
                 'data' => [
                     'version_id' => $version->id,
                     'version_number' => $version->version_number,
                     'status' => 'failed',
                 ],
             ], 500);
-        } finally {
-            if ($tempImportPath && is_file($tempImportPath)) {
-                @unlink($tempImportPath);
-            }
         }
+
+        return response()->json([
+            'message' => 'Archivo recibido. La importación se está procesando en segundo plano.',
+            'data' => [
+                'source_id' => $excelSource->id,
+                'version_id' => $version->id,
+                'version_number' => $version->version_number,
+                'status' => 'processing',
+            ],
+        ], 202);
     }
 
     public function datosActuales(Request $request, ExcelSource $excelSource)

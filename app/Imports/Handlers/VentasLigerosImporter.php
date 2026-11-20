@@ -124,22 +124,22 @@ class VentasLigerosImporter implements ExcelSourceImporter
             ];
 
             $rules = [
-                'tema'                => 'required|string|max:255',
-                'anio'                => 'required|integer|min:1900|max:2100',
-                'mes'                 => 'required|string|max:30',
-                'mes_numero'          => 'required|integer|min:1|max:12',
-                'marca'               => 'required|string|max:100',
-                'modelo'              => 'required|string|max:150',
-                'tipo'                => 'required|string|max:100',
-                'segmento_inegi'      => 'required|string|max:100',
-                'origen'              => 'required|string|max:50',
-                'pais_origen'         => 'required|string|max:100',
-                'cantidad'            => 'required|integer|min:0',
-                'mercado_inegi'       => 'required|string|max:100',
-                'marca_mercado_foton' => 'required|string|max:100',
-                'unidad_foton_inegi'  => 'nullable|string|max:150',
-                'seg_pv'              => 'nullable|string|max:100',
-                'origen_2'            => 'nullable|string|max:100',
+                'tema'                => 'required',
+                'anio'                => 'nullable',
+                'mes'                 => 'nullable',
+                'mes_numero'          => 'nullable',
+                'marca'               => 'nullable',
+                'modelo'              => 'nullable',
+                'tipo'                => 'nullable',
+                'segmento_inegi'      => 'nullable',
+                'origen'              => 'nullable',
+                'pais_origen'         => 'nullable',
+                'cantidad'            => 'nullable',
+                'mercado_inegi'       => 'nullable',
+                'marca_mercado_foton' => 'nullable',
+                'unidad_foton_inegi'  => 'nullable',
+                'seg_pv'              => 'nullable',
+                'origen_2'            => 'nullable',
             ];
 
             $attributes = [
