@@ -99,17 +99,17 @@ class Ventas_LigerosImporter implements ExcelSourceImporter
             ];
 
             $rules = [
-                'tema'           => 'required|string|max:255',
-                'anio'           => 'required|integer|min:1900|max:2100',
-                'mes'            => 'required|string|max:30',
-                'marca'          => 'required|string|max:100',
-                'modelo'         => 'required|string|max:150',
-                'tipo'           => 'required|string|max:100',
-                'segmento_inegi' => 'required|string|max:100',
-                'origen'         => 'required|string|max:100',
-                'pais_origen'    => 'required|string|max:100',
-                'cantidad'       => 'required|integer|min:0',
-                'numero_mes'     => 'required|integer|min:1|max:12',
+                'tema'           => 'required',
+                'anio'           => 'nullable',
+                'mes'            => 'nullable',
+                'marca'          => 'nullable',
+                'modelo'         => 'nullable',
+                'tipo'           => 'nullable',
+                'segmento_inegi' => 'nullable',
+                'origen'         => 'nullable',
+                'pais_origen'    => 'nullable',
+                'cantidad'       => 'nullable',
+                'numero_mes'     => 'nullable',
             ];
 
             $attributes = [
