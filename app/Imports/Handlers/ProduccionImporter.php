@@ -99,17 +99,17 @@ class ProduccionImporter implements ExcelSourceImporter
             ];
 
             $rules = [
-                'prod_est'   => 'nullable|string|max:255',
-                'cobertura'  => 'nullable|string|max:100',
-                'anio'       => 'required|integer|min:1900|max:2100',
-                'mes'        => 'required|string|max:30',
-                'marca'      => 'nullable|string|max:100',
-                'modelo'     => 'nullable|string|max:150',
-                'tipo'       => 'nullable|string|max:100',
-                'segmento'   => 'nullable|string|max:100',
-                'produccion' => 'required|integer|min:0',
-                'estatus'    => 'nullable|string|max:100',
-                'numero_mes' => 'required|integer|min:1|max:12',
+                'prod_est'   => 'required',
+                'cobertura'  => 'nullable',
+                'anio'       => 'nullable',
+                'mes'        => 'nullable',
+                'marca'      => 'nullable',
+                'modelo'     => 'nullable',
+                'tipo'       => 'nullable',
+                'segmento'   => 'nullable',
+                'produccion' => 'nullable',
+                'estatus'    => 'nullable',
+                'numero_mes' => 'nullable',
 
             ];
 

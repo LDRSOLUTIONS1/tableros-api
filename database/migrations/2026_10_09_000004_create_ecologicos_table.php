@@ -18,16 +18,16 @@ return new class extends Migration
                 ->unique('ecologicos_registro_hash_unique');
 
             $table->string('tema', 255);
-            $table->unsignedSmallInteger('anio');
-            $table->string('mes', 30);
-            $table->string('entidad_federativa', 100);
+            $table->unsignedSmallInteger('anio')->nullable();
+            $table->string('mes', 30)->nullable();
+            $table->string('entidad_federativa', 100)->nullable();
             $table->unsignedBigInteger('unidades_vehiculares_electricas')
-                ->default(0);
+                ->nullable();
             $table->unsignedBigInteger('unidades_vehiculares_hibridas_plugin')
-                ->default(0);
+                ->nullable();
             $table->unsignedBigInteger('unidades_vehiculares_hibridas')
-                ->default(0);
-            $table->unsignedTinyInteger('numero_mes');
+                ->nullable();
+            $table->unsignedTinyInteger('numero_mes')->nullable();
 
             $table->timestamps();
         });

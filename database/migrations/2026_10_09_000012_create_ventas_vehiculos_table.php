@@ -19,17 +19,17 @@ return new class extends Migration
                 ->unique('ventas_vehiculos_registro_hash_unique');
 
             $table->string('tema', 255);
-            $table->unsignedSmallInteger('anio');
-            $table->string('mes', 30);
-            $table->unsignedTinyInteger('numero_mes');
-            $table->string('marca', 100);
-            $table->string('modelo', 150);
-            $table->string('tipo', 100);
-            $table->string('segmento_inegi', 100);
-            $table->string('origen', 100);
-            $table->string('pais_origen', 100);
-            $table->unsignedBigInteger('cantidad')->default(0);
-            $table->string('mercado_inegi', 100);
+            $table->unsignedSmallInteger('anio')->nullable();
+            $table->string('mes', 30)->nullable();
+            $table->unsignedTinyInteger('numero_mes')->nullable();
+            $table->string('marca', 100)->nullable();
+            $table->string('modelo', 150)->nullable();
+            $table->string('tipo', 100)->nullable();
+            $table->string('segmento_inegi', 100)->nullable();
+            $table->string('origen', 100)->nullable();
+            $table->string('pais_origen', 100)->nullable();
+            $table->unsignedBigInteger('cantidad')->nullable();
+            $table->string('mercado_inegi', 100)->nullable();
             $table->string('marca_mercado_foton', 100)->nullable();
             $table->string('unidad_foton_inegi', 150)->nullable();
             $table->string('seg_p_v', 100)->nullable();

@@ -84,14 +84,14 @@ class EcologicosImporter implements ExcelSourceImporter
             ];
 
             $rules = [
-                'tema'                                  => 'required|string|max:255',
-                'anio'                                  => 'required|integer|min:1900|max:2100',
-                'mes'                                   => 'required|string|max:30',
-                'entidad_federativa'                    => 'required|string|max:100',
-                'unidades_vehiculares_electricas'       => 'required|integer|min:0',
-                'unidades_vehiculares_hibridas_plugin'  => 'required|integer|min:0',
-                'unidades_vehiculares_hibridas'         => 'required|integer|min:0',
-                'numero_mes'                            => 'required|integer|min:1|max:12',
+                'tema'                                  => 'required',
+                'anio'                                  => 'nullable',
+                'mes'                                   => 'nullable',
+                'entidad_federativa'                    => 'nullable',
+                'unidades_vehiculares_electricas'       => 'nullable',
+                'unidades_vehiculares_hibridas_plugin'  => 'nullable',
+                'unidades_vehiculares_hibridas'         => 'nullable',
+                'numero_mes'                            => 'nullable',
             ];
 
             $attributes = [

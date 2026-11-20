@@ -108,19 +108,19 @@ class ExportacionImporter implements ExcelSourceImporter
             ];
 
             $rules = [
-                'prod_est'          => 'nullable|string|max:255',
-                'cobertura'         => 'nullable|string|max:100',
-                'anio'              => 'required|integer|min:1900|max:2100',
-                'mes_numero'        => 'nullable|integer|between:1,12',
-                'mes'               => 'required|string|max:30',
-                'marca'             => 'nullable|string|max:100',
-                'modelo'            => 'nullable|string|max:150',
-                'tipo'              => 'nullable|string|max:100',
-                'segmento'          => 'nullable|string|max:100',
-                'id_pais_destino'   => 'nullable|integer|min:0',
-                'exportacion'       => 'nullable|integer|min:0',
-                'estatus'           => 'nullable|string|max:100',
-                'pais_destino'      => 'nullable|string|max:100',
+                'prod_est'          => 'required',
+                'cobertura'         => 'nullable',
+                'anio'              => 'nullable',
+                'mes_numero'        => 'nullable',
+                'mes'               => 'nullable',
+                'marca'             => 'nullable',
+                'modelo'            => 'nullable',
+                'tipo'              => 'nullable',
+                'segmento'          => 'nullable',
+                'id_pais_destino'   => 'nullable',
+                'exportacion'       => 'nullable',
+                'estatus'           => 'nullable',
+                'pais_destino'      => 'nullable',
             ];
 
             $attributes = [

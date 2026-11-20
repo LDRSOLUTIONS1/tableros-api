@@ -17,15 +17,15 @@ return new class extends Migration
             $table->char('registro_hash', 64)
                 ->unique('produccion_vehiculos_registro_hash_unique');
 
-            $table->string('prod_est', 255)->nullable();
+            $table->string('prod_est', 255);
             $table->string('cobertura', 100)->nullable();
-            $table->unsignedSmallInteger('anio');
-            $table->string('mes', 30);
+            $table->unsignedSmallInteger('anio')->nullable();
+            $table->string('mes', 30)->nullable();
             $table->string('marca', 100)->nullable();
             $table->string('modelo', 150)->nullable();
             $table->string('tipo', 100)->nullable();
             $table->string('segmento', 100)->nullable();
-            $table->unsignedBigInteger('produccion')->default(0);
+            $table->unsignedBigInteger('produccion')->nullable();
             $table->string('estatus', 100)->nullable();
             $table->unsignedTinyInteger('numero_mes')->nullable();
 

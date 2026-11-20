@@ -17,17 +17,17 @@ return new class extends Migration
             $table->char('registro_hash', 64)
                 ->unique('exportacion_vehiculos_registro_hash_unique');
 
-            $table->string('prod_est', 255)->nullable();
+            $table->string('prod_est', 255);
             $table->string('cobertura', 100)->nullable();
-            $table->unsignedSmallInteger('anio');
+            $table->unsignedSmallInteger('anio')->nullable();
             $table->unsignedTinyInteger('mes_numero')->nullable();
-            $table->string('mes', 30);
+            $table->string('mes', 30)->nullable();
             $table->string('marca', 100)->nullable();
             $table->string('modelo', 150)->nullable();
             $table->string('tipo', 100)->nullable();
             $table->string('segmento', 100)->nullable();
             $table->unsignedBigInteger('id_pais_destino')->nullable();
-            $table->unsignedBigInteger('exportacion')->default(0);
+            $table->unsignedBigInteger('exportacion')->nullable();
             $table->string('estatus', 100)->nullable();
             $table->string('pais_destino', 100)->nullable();
 

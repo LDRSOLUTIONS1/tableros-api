@@ -119,21 +119,21 @@ class VentasVehiculosImporter implements ExcelSourceImporter
             ];
 
             $rules = [
-                'tema'                => 'required|string|max:255',
-                'anio'                => 'required|integer|min:1900|max:2100',
-                'mes'                 => 'required|string|max:30',
-                'numero_mes'          => 'required|integer|min:1|max:12',
-                'marca'               => 'required|string|max:100',
-                'modelo'              => 'required|string|max:150',
-                'tipo'                => 'required|string|max:100',
-                'segmento_inegi'      => 'required|string|max:100',
-                'origen'              => 'required|string|max:100',
-                'pais_origen'         => 'required|string|max:100',
-                'cantidad'            => 'required|integer|min:0',
-                'mercado_inegi'       => 'required|string|max:100',
-                'marca_mercado_foton' => 'nullable|string|max:100',
-                'unidad_foton_inegi'  => 'nullable|string|max:150',
-                'seg_p_v'             => 'nullable|string|max:100',
+                'tema'                => 'required',
+                'anio'                => 'nullable',
+                'mes'                 => 'nullable',
+                'numero_mes'          => 'nullable',
+                'marca'               => 'nullable',
+                'modelo'              => 'nullable',
+                'tipo'                => 'nullable',
+                'segmento_inegi'      => 'nullable',
+                'origen'              => 'nullable',
+                'pais_origen'         => 'nullable',
+                'cantidad'            => 'nullable',
+                'mercado_inegi'       => 'nullable',
+                'marca_mercado_foton' => 'nullable',
+                'unidad_foton_inegi'  => 'nullable',
+                'seg_p_v'             => 'nullable',
             ];
 
             $attributes = [
