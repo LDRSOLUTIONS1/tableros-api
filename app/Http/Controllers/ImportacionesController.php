@@ -168,11 +168,30 @@ class ImportacionesController extends Controller
             ->where('estado', 2)
             ->with([
                 'pages' => function ($query) {
-                    $query->where('estado', 2)
+                    $query->select('id', 'power_bi_dashboard_id', 'nombre', 'orden', 'estado')
+                        ->where('estado', 2)
                         ->with([
                             'excelSources' => function ($query) {
-                                $query->where('excel_sources.estado', 2)
-                                    ->with('currentVersion');
+                                $query->select(
+                                    'excel_sources.id',
+                                    'excel_sources.codigo',
+                                    'excel_sources.nombre',
+                                    'excel_sources.current_version_id',
+                                    'excel_sources.estado'
+                                )
+                                    ->where('excel_sources.estado', 2)
+                                    ->with([
+                                        'currentVersion' => function ($query) {
+                                            $query->select(
+                                                'id',
+                                                'excel_source_id',
+                                                'version_number',
+                                                'original_filename',
+                                                'status',
+                                                'imported_at'
+                                            );
+                                        },
+                                    ]);
                             }
                         ]);
                 }
