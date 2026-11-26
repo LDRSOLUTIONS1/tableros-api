@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Middleware\VerifyIntranetCookie;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -15,11 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->alias([
+            'intranet.session' => VerifyIntranetCookie::class,
+        ]);
 
         Authenticate::redirectUsing(function () {
             return null;
         });
-
     })
     ->withExceptions(function (Exceptions $exceptions): void {
 
@@ -29,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
 
             return response()->json([
-                'message' => 'No autorizado'
+                'message' => 'No autorizado',
             ], 401);
 
         });

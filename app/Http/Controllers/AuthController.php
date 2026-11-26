@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\AccessLog;
+use App\Models\User;
+use App\Support\IntranetJwt;
 use Illuminate\Http\Request;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+    public function __construct(private readonly IntranetJwt $intranetJwt) {}
+
     public function logincollaborator(Request $request, $collaborator_number)
     {
         try {
             $user = User::where('collaborator_number', $collaborator_number)->first();
 
-            if (!$user) {
+            if (! $user) {
                 return response()->json([
-                    'error' => 'Empleado no encontrado.'
+                    'error' => 'Empleado no encontrado.',
                 ], 404);
             }
 
@@ -28,53 +28,45 @@ class AuthController extends Controller
             $token = $tokenResult->plainTextToken;
 
             AccessLog::create([
-                'user_id'    => $user->id,
-                'token_id'   => $tokenResult->accessToken->id,
+                'user_id' => $user->id,
+                'token_id' => $tokenResult->accessToken->id,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
-                'login_at'   => now(),
+                'login_at' => now(),
             ]);
 
             return response()->json([
                 'message' => 'Autenticación exitosa',
                 'user' => $user,
-                'token' => $token
+                'token' => $token,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Error al autenticar empleado',
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
 
     public function login(Request $request)
     {
-        $jwt = $request->cookie('token');
+        $validation = $this->intranetJwt->validateRequest($request);
 
-        if (!$jwt) {
+        if (! $validation['valid']) {
             return response()->json([
-                'message' => 'No existe token'
+                'code' => $validation['code'],
+                'message' => $validation['message'],
             ], 401);
         }
 
-        try {
-            $decoded = JWT::decode(
-                $jwt,
-                new Key(config('jwt.secret_rh'), 'HS256')
-            );
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Token inválido'
-            ], 401);
-        }
+        $decoded = $validation['payload'];
 
         $user = User::where(
             'external_rh_id',
             $decoded->id_colaborador
         )->first();
 
-        if (!$user) {
+        if (! $user) {
             $user = User::where(
                 'email',
                 $decoded->correo
@@ -90,7 +82,7 @@ class AuthController extends Controller
                 'brand' => $decoded->marca,
                 'puesto' => $decoded->puesto,
                 'area' => $decoded->area,
-                'location_name' => $decoded->nombre_sede
+                'location_name' => $decoded->nombre_sede,
             ]);
         } else {
             $user = User::create([
@@ -103,7 +95,7 @@ class AuthController extends Controller
                 'location_name' => $decoded->nombre_sede,
                 'puesto' => $decoded->puesto,
                 'area' => $decoded->area,
-                'password' => Hash::make(Str::random(40))
+                'password' => Hash::make(Str::random(40)),
             ]);
         }
 
@@ -111,17 +103,17 @@ class AuthController extends Controller
         $token = $tokenResult->plainTextToken;
 
         AccessLog::create([
-            'user_id'    => $user->id,
-            'token_id'   => $tokenResult->accessToken->id,
+            'user_id' => $user->id,
+            'token_id' => $tokenResult->accessToken->id,
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
-            'login_at'   => now(),
+            'login_at' => now(),
         ]);
 
         return response()->json([
 
             'token' => $token,
-            'user' => $user
+            'user' => $user,
 
         ]);
     }
@@ -143,7 +135,14 @@ class AuthController extends Controller
                 'puesto' => $user->puesto,
                 'area' => $user->area,
                 'estado' => $user->estado,
-            ]
+            ],
+        ], 200);
+    }
+
+    public function checkSession(Request $request)
+    {
+        return response()->json([
+            'authenticated' => true,
         ], 200);
     }
 }

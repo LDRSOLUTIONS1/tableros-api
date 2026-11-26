@@ -1,21 +1,22 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ExcelImportController;
 use App\Http\Controllers\ExcelSourcePageController;
+use App\Http\Controllers\ImportacionesController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TablerosController;
 use App\Http\Controllers\UsersController;
-use App\Http\Controllers\ImportacionesController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/login/{collaborator_number}', [AuthController::class, 'logincollaborator']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'intranet.session'])->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/session/check', [AuthController::class, 'checkSession']);
     Route::resource('/roles', RolesController::class);
     Route::resource('/usuarios', UsersController::class);
     Route::resource('/logs', LogsController::class);
